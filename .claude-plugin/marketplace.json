@@ -1,6 +1,6 @@
 {
   "name": "wisdom-lens",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Universal operating principles for thinking, working, leading, and building in the AI age. Distilled from ancient wisdom texts into actionable frameworks for modern professionals.",
   "owner": {
     "name": "Zubair Shaikh",
@@ -10,7 +10,7 @@
     {
       "name": "wisdom-lens",
       "source": "./",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Universal operating principles for thinking, working, leading, and building in the AI age. Distilled from ancient wisdom texts into actionable frameworks for modern professionals.",
       "keywords": [
         "wisdom",
