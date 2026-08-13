@@ -1,7 +1,7 @@
 {
   "name": "wisdom-lens",
-  "version": "1.2.0",
-  "description": "Universal operating principles for thinking, working, leading, and building in the AI age. Distilled from ancient wisdom texts into actionable frameworks for modern professionals.",
+  "version": "1.2.1",
+  "description": "Universal operating principles for thinking, working, leading, and building in the AI age — decision frameworks, AI failure diagnostics, and daily operating rules for modern professionals.",
   "owner": {
     "name": "Zubair Shaikh",
     "url": "https://github.com/CodeWithJuber"
@@ -10,8 +10,8 @@
     {
       "name": "wisdom-lens",
       "source": "./",
-      "version": "1.2.0",
-      "description": "Universal operating principles for thinking, working, leading, and building in the AI age. Distilled from ancient wisdom texts into actionable frameworks for modern professionals.",
+      "version": "1.2.1",
+      "description": "Universal operating principles for thinking, working, leading, and building in the AI age — decision frameworks, AI failure diagnostics, and daily operating rules for modern professionals.",
       "keywords": [
         "wisdom",
         "decision-making",
