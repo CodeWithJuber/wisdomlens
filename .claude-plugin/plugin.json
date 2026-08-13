@@ -19,8 +19,5 @@
   "repository": "https://github.com/CodeWithJuber/wisdomlens",
   "license": "MIT",
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
-  "agents": [
-    "./agents/wisdom-advisor.md"
-  ]
+  "hooks": "./hooks/hooks.json"
 }

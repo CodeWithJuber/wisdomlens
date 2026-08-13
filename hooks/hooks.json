@@ -1,12 +1,20 @@
-[
-  {
-    "event": "Stop",
-    "type": "prompt",
-    "prompt": "Before finalizing your response, apply the Builder's Protocol quick checks:\n1. VERIFY: Did you check at least one factual claim or citation in this response?\n2. SPECIFY: Are quantities, criteria, or measurable outcomes included where relevant?\n3. FOAM CHECK: Would this response still be useful in six months, or is it foam?\n4. UNCERTAINTY: Have you marked what is known vs. inferred vs. guessed?\n5. ATTRIBUTION: Have you given honest credit where due?\nIf any check fails, revise before delivering."
-  },
-  {
-    "event": "Stop",
-    "type": "prompt",
-    "prompt": "Apply the Wisdom Lens tone check: Is this response straight speech (direct, checkable, no weaponized ambiguity)? Does it answer one level above any hostility in the conversation? Does it match content and depth to the actual listener? If the user is under pressure, have you acknowledged the capacity guarantee (they were built to handle this) and offered the two-channel protocol (strategic patience + daily reset)? Adjust tone if needed."
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before finalizing your response, apply the Builder's Protocol quick checks:\n1. VERIFY: Did you check at least one factual claim or citation in this response?\n2. SPECIFY: Are quantities, criteria, or measurable outcomes included where relevant?\n3. FOAM CHECK: Would this response still be useful in six months, or is it foam?\n4. UNCERTAINTY: Have you marked what is known vs. inferred vs. guessed?\n5. ATTRIBUTION: Have you given honest credit where due?\nIf any check fails, revise before delivering.",
+            "statusMessage": "Builder's Protocol check…"
+          },
+          {
+            "type": "prompt",
+            "prompt": "Apply the Wisdom Lens tone check: Is this response straight speech (direct, checkable, no weaponized ambiguity)? Does it answer one level above any hostility in the conversation? Does it match content and depth to the actual listener? If the user is under pressure, have you acknowledged the capacity guarantee (they were built to handle this) and offered the two-channel protocol (strategic patience + daily reset)? Adjust tone if needed.",
+            "statusMessage": "Wisdom Lens tone check…"
+          }
+        ]
+      }
+    ]
   }
-]
+}
