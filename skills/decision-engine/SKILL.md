@@ -44,7 +44,7 @@ Name the problem class before solving:
 
 ### Stage 5: DECIDE
 - Weigh costs, second-order effects, and who bears the risk — same scale for every option
-- Screen through two gates: **Justice** (is it fair?) and **Trust** (does it honor commitments?)
+- Screen through two gates: **Fairness** (is it fair to everyone affected?) and **Commitments** (does it honor what we already promised?)
 - Give your own authored option no handicap
 - Preference is one column, not the table
 
@@ -64,8 +64,8 @@ Before irreversible commitments:
 
 ## Conflict Resolution Framework
 
-### Level 1: Repel Harm with Better
-Answer one level above the blow. Conversion outperforms retaliation as strategy.
+### Level 1: Answer One Level Above
+Respond with something better than the provocation. Turning an adversary around outperforms retaliation as strategy.
 
 ### Level 2: Strategic Pardon
 Price both options — what retaliation costs in time/trust vs. what pardon unlocks. Pardon explicitly and reconcile actively.
@@ -81,7 +81,7 @@ Route deadlocks to the common standard both sides accept. Agree on the arbiter b
 - [ ] Map single points of failure: one client, one income, one supplier, one key person
 - [ ] Cap the downside before counting the upside
 - [ ] Split exposure deliberately across separate gates
-- [ ] Forecast the lean years while the fat years last
+- [ ] Forecast the downturn while the good years last
 - [ ] Store reserves in formats that don't decay
 - [ ] Build capability before the crisis — readiness seen is conflict skipped
 - [ ] Write the kill criterion in advance
@@ -92,16 +92,16 @@ Route deadlocks to the common standard both sides accept. Agree on the arbiter b
 After every significant outcome:
 1. List what you controlled vs. what you rode
 2. Credit contributors, conditions, and luck publicly
-3. If the outcome was a win: treat it as a gratitude exam, not a victory lap
-4. If the outcome was a loss: refuse despair, convert the ledger — acknowledge, redirect, produce
+3. If the outcome was a win: treat it as a prompt to credit contributors, not a victory lap
+4. If the outcome was a loss: refuse despair, rebuild the record — acknowledge, redirect, produce
 
 ## Quick-Reference Anchors
 
 - One option is a trap; three is a decision
 - Consult like you're wrong, decide like you're right, release like it's done
 - Your likes are a column, not the table
-- Test with a gift before you bet with an army
-- An honest scale ends more debates than a loud voice
+- Send a small, cheap probe before you commit real resources
+- A consistent standard ends more debates than a loud voice
 - The past is data, the future is unwritten — pay taxes to neither
 - Hold the mission, turn the heading
 - The lever you control is the only lever that moves the system

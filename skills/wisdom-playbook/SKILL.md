@@ -31,7 +31,7 @@ Core principle: Every result is downstream of a thought. Perception divides more
 2. **CLASSIFY** — Clear, complicated, complex, or chaotic? The class selects the tool.
 3. **DIAGNOSE** — Chase the root, not the symptom. Test for contradictions. Blame the process before the person.
 4. **GENERATE** — One option is a trap; two is a dilemma; three is a decision. Consult before revealing your position.
-5. **DECIDE** — Weigh on honest scales. Screen through justice and trust gates. Release ego-attachment.
+5. **DECIDE** — Apply the same criteria to every option. Screen for fairness and for commitments already made. Release ego-attachment.
 6. **ACT & SUSTAIN** — Take every precaution, then practice calibrated trust. Execute with full presence. Loop back without shame if results miss.
 
 ### Chapter 3: Decision Making
@@ -41,11 +41,11 @@ Core principle: Every result is downstream of a thought. Perception divides more
 - **After the Vote, One Army**: Argue hard before; execute as one after.
 
 ### Chapter 4: Pressure & Hardship Handling
-- **Refuse the Two Taxes**: Fear (tax on future) and grief (tax on past). Present-moment alignment cancels both.
+- **Refuse the Two Taxes**: Fear (tax on future) and grief (tax on past). Focusing on the present hour cancels both.
 - **Two-Channel Protocol**: Strategic patience (internal) + daily reset (external). Grit alone burns out; connection alone drifts.
-- **Trust the Capacity Guarantee**: You were built to handle what you carry. Overwhelm signals scope renegotiation, not inadequacy.
+- **Match Load to Capacity**: Assume the load is inside your range until evidence says otherwise. Overwhelm signals scope renegotiation, not inadequacy.
 - **Engineer the Calm**: Composure is a stance before it is a feeling. Model settled-ness in crisis.
-- **Find the Ease Inside the Hardship**: Ease arrives with hardship, not after it. Finish, rise, aim.
+- **Look for Relief Inside the Hard Stretch**: Relief usually appears during the difficulty, not after it. Finish, stand up, pick the next target.
 
 ### Chapter 5: Situation Handling & Adaptability
 - **Pivot the Heading, Keep the Mission**: Direction serves purpose; it is not the purpose.
@@ -57,18 +57,18 @@ Core principle: Every result is downstream of a thought. Perception divides more
 ## Part II — The Work
 
 ### Chapter 6: Innovation & New Beginnings
-- **Begin by Separating What Is Fused**: Every beginning is a deliberate split. Secure your "water" (non-negotiable sustaining input) first.
+- **Begin by Separating What Is Fused**: Every new venture starts by splitting something that used to be one thing. Secure your single non-negotiable sustaining input first.
 - **Treat the World as an Open R&D Lab**: Innovation comes from close watching, not brainstorm rooms.
 - **Move First — Direction Is Earned by Motion**: Clarity is a product of starting, not a prerequisite.
-- **The Pen Is the Original Innovation Engine**: Writing is technology transfer across time. Capture ideas within the hour.
+- **Writing Is the Original Innovation Engine**: Writing is technology transfer across time. Capture ideas within the hour.
 - **Every Failure Is Raw Material**: Acknowledge, redirect, produce good work. The arc bends upward.
 
 ### Chapter 7: Task Execution & Excellence
 - **Excellence Is the Standard**: Full presence applied until the deliverable exceeds the spec.
 - **Define the Measure Before You Build**: Write acceptance criteria before starting. Unmeasured work is unfinishable.
 - **Ship — Output Is the Argument**: A track record of visible output answers questions no status update can.
-- **The Merit Engine Pays Only on Striving**: Output is the only currency; the audit is constant; the ledger is lossless.
-- **Give Small Things Full Weight**: The last two percent is where reputations are settled.
+- **Effort Is the Only Input That Pays**: Output is the currency; review is continuous; the record of what you shipped does not fade.
+- **Give Small Things Full Attention**: The last two percent is where reputations are settled.
 
 ### Chapter 8: Planning & Strategy
 - **Budget on the Downside**: Size reserves for the bad stretch, not the average quarter.
@@ -79,7 +79,7 @@ Core principle: Every result is downstream of a thought. Perception divides more
 ### Chapter 9: Discipline, Habits, Time & Energy
 - **Time Defaults to Loss**: Without deliberate direction, every hour drains. Audit hours like money.
 - **Respect the Engineered Rhythm**: Sleep is a system reset. Alternate intensity with genuine off-blocks.
-- **Book the Night Shift for Deep Work**: Hardest work goes where the channel is clearest.
+- **Book a Protected Block for Deep Work**: Put the hardest work where interruptions are fewest.
 - **Train Restraint in Low Stakes**: Practice saying no to what you may, so you can say no to what you mustn't.
 
 ### Chapter 10: Wealth & Resource Management
@@ -87,7 +87,7 @@ Core principle: Every result is downstream of a thought. Perception divides more
 - **If It Isn't Written, It Isn't Real**: Documentation is how trust survives memory.
 - **Hold the Calibrated Middle**: Both extremes — hoarding and depletion — fail.
 - **Circulation Compounds**: What you circulate compounds; what you clutch decays.
-- **Diversify Your Trust**: Provision flows from upstream of any single channel.
+- **Diversify Your Income Sources**: Resources reach you through more than one channel; never depend on a single one.
 
 ## Part III — The People
 
@@ -98,7 +98,7 @@ Core principle: Every result is downstream of a thought. Perception divides more
 - **Hire on Two Axes**: Capability plus integrity. Score both independently.
 
 ### Chapter 12: Conflict & Forgiveness
-- **Repel Harm with Something Better**: Answer one level above the blow. Conversion > payback.
+- **Answer Hostility with a Better Move**: Respond one level above the provocation. Turning someone around beats getting even.
 - **Pardon Is Strength**: Forgiveness takes more resolve than retaliation.
 - **Declare Amnesty from Strength**: When you hold the leverage, open with amnesty.
 - **Escalate Deadlocks to Shared Principles**: Route to the common standard, never to seniority.
@@ -107,50 +107,50 @@ Core principle: Every result is downstream of a thought. Perception divides more
 - **Say It Straight**: Direct, checkable statements. Straight speech is maintenance on everything downstream.
 - **The Persuasion Protocol**: Right content, dignified delivery, better argument (not louder voice).
 - **Speak Only What You Can Stand Behind**: Label speech as verified, inference, or speculation.
-- **Speech Hygiene**: Ban ridicule, derogatory labels, negative assumptions, backbiting.
+- **Speech Hygiene**: No mockery, no dismissive labels for people, no assuming bad intent, no talking about colleagues behind their backs.
 
 ### Chapter 14: Failure & Recovery
 - **The Reset Loop**: Notice, repair, don't persist. Recovery latency > error rate.
 - **Own It in the First Hour**: Speed of ownership determines speed of recovery.
-- **Never Acquit Yourself**: Self-assessment is the least reliable instrument. Install external checks.
-- **Refuse Despair — Convert the Ledger**: Every failure is convertible. Outproduce the old record.
+- **Never Grade Your Own Work**: Self-assessment is the least reliable instrument. Install external checks.
+- **Refuse Despair — Rebuild the Record**: Every failure can be offset. Outproduce the old record.
 
 ### Chapter 15: Success, Ego & Humility
 - **The Attribution Audit**: Full credit for effort, honest accounting of everything else.
-- **Treat Every Win as a Gratitude Exam**: Credit sources, convert gain into giving.
+- **Treat Every Win as a Credit Check**: Name who and what contributed, and reinvest part of the gain.
 - **Victory Protocol**: The bigger the conquest, the deeper the self-audit.
-- **Hold the Equilibrium**: Neither exult nor despair. Both distort judgment.
+- **Hold the Middle**: Don't over-celebrate and don't spiral. Both distort judgment.
 
 ## Part IV — The Core
 
 ### Chapter 16: Fear, Anxiety & Trust
-- **The Exit Theorem**: Principled conduct produces exits you couldn't see from inside the constraint.
+- **The Hidden-Option Rule**: Holding to your standards tends to open options you couldn't see from inside the constraint.
 - **Calibrated Trust**: Prepare like everything depends on you; release like nothing does.
 - **The Anxiety Profile Fix**: Stability is a schedule, not a mood. Install fixed daily practice.
 
 ### Chapter 17: Learning & Growth
-- **Read First**: Learning is the first act. Read before you believe, buy, or build.
+- **Read First**: Learning comes before commitment. Read before you believe, buy, or build.
 - **Names Are the Superpower**: Master a field's 100 core terms before anything else.
 - **Ask the Specialists**: "I don't know" triggers consultation, never improvisation.
 
 ### Chapter 18: Ethics & Integrity
-- **The Balance**: Full measure in every transaction. Say only what you do.
+- **Full Measure**: Deliver the full amount in every transaction. Only claim what you actually do.
 - **Consent Is the Litmus Test**: No transaction without willing agreement.
 
 ### Chapter 19: Focus & Inner State
-- **Cures for Heedlessness**: Deliberate attention reset. The remembrance protocol.
+- **Fixes for Inattention**: Deliberate attention reset. A scheduled re-orientation routine.
 - **Attention Ethics**: Budget focus by receptivity and need, not by rank.
 
 ### Chapter 20: Purpose & Legacy
 - **Steward Not Owner**: Everything is on loan. Stewardship, not possession.
-- **The Enduring Deeds**: What outlasts you defines you.
-- **The Final Review**: Live as if every action is being recorded — because it is.
+- **The Enduring Work**: What outlasts you defines you.
+- **The Permanent Record**: Assume anything you do can surface later — because it usually can.
 
 ## The One-Page Operating System
 
 Mind: Reflect. Model-test. Stay awake. Extract the lesson.
 Work: Verify. Specify. Ship. Give small things full weight.
-People: Lead soft. Consult. Commit. Repel harm with better. Say it straight.
-Core: Trust after diligence. Read first. Hold the balance. Focus. Steward the legacy.
+People: Lead soft. Consult. Commit. Answer hostility with better. Say it straight.
+Core: Trust after diligence. Read first. Keep the measure honest. Focus. Steward the legacy.
 
 For detailed chapter content, field practices, and anchors, see the `references/` directory.

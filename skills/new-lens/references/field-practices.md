@@ -34,7 +34,7 @@ Operator-facing verbs for the AI age.
 
 ### Training-Data Dependency
 - Audit training data and conventions by grounding, not by lineage.
-- When better guidance arrives, update — even when it invalidates your history.
+- When better evidence arrives, update — even when it invalidates your history.
 - Pre-register kill criteria for every model, approach, and belief you adopt.
 - Feed systems verified external input: real tests, real users, real measurements.
 - Invest in judgment the way you invest in compute — deliberately and recurrently.
@@ -43,7 +43,7 @@ Operator-facing verbs for the AI age.
 - Tag every AI output: known, inferred, or guessed. No tag, no trust.
 - Never let a confidence score substitute for verification.
 - Open the source: every citation, every package, every quote.
-- Before any verdict, ask: have I encompassed this, or am I guessing?
+- Before any verdict, ask: do I actually understand this, or am I guessing?
 - Ship "unknown" as a first-class output; refuse filled-in guesses.
 
 ## Part II — Workflow Failure Modes
@@ -58,7 +58,7 @@ Operator-facing verbs for the AI age.
 ### Over-Complication
 - Review every pipeline with the 2 a.m. test: could a tired teammate reconstruct it?
 - Count steps, files, and tokens per shipped result monthly; cut whatever grows.
-- Verify momentous outputs in pairs or solo inside a protected hour — never in a crowd.
+- Verify high-stakes outputs in pairs or solo inside a protected hour — never in a crowd.
 - Budget tokens, abstractions, and infrastructure at the standing middle.
 - Calibrate the workflow to this quarter's real capacity.
 
@@ -83,25 +83,25 @@ Operator-facing verbs for the AI age.
 - Define good before opening the firehose; never let volume set the standard.
 - Label machine involvement wherever margin depends on hiding it.
 - Test output at arrival-distance: could someone act on it without asking you anything?
-- Run the five-layer audit quarterly on your own output.
+- Run the five-marker hollowness audit quarterly on your own output.
 
 ### The Black Box
 - Contract explanation rights before deployment; opacity needs a declassification date.
 - Run discrepancy audits: rephrase, repeat, cross-examine across sessions; log every contradiction.
 - Build verification and rollback that never require internals.
 - Prefer vendors whose top layer bears tamper-cost.
-- Demand creator-side artifacts: evals, training provenance, changelogs.
+- Demand maker-side artifacts: evals, training provenance, changelogs.
 
 ### Unwanted Costs
 - Attach an exception clause to every autonomous plan — caps, exits, tripwires.
-- Run postmortems in the order: loss seen → blame burned out → transgression named → substitute specified.
+- Run postmortems in the order: loss acknowledged → blame-trading stopped → the actual error named → the replacement plan specified.
 - Calibrate spend to the standing middle: neither starved nor flooded.
 - Circulate what works: fixes, prompts, evals. Track what returns.
 - Meter haste: add friction exactly where error compounds — production, payments, deletions.
 
 ### Values & Trust
 - Test for re-ranked priorities: does the agent optimize what it measures over what it was told?
-- Keep a named human bearer of the trust on every deployment; no orphaned autonomy.
+- Keep a named human accountable for every deployment; no orphaned autonomy.
 - Encode invariants in permissions and code, never in prompts alone.
 - Write the mandate; bound the action space to it; name the watcher for after the session.
 - Keep the agent's constitution to kernel size: three commands, three prohibitions.
@@ -110,7 +110,7 @@ Operator-facing verbs for the AI age.
 
 ### What Remains for Humans
 - Choose what to start, where to aim, when to stop; delegate none of the three.
-- Do one meaningful task unassisted daily; skill is interest on striving.
+- Do one meaningful task unassisted daily; skill is the interest paid on your own effort.
 - Write the one-sentence purpose before the prompt.
 - Schedule learning reps the machine cannot do for you: read the paper, debug the failure.
 - Audit quarterly what the tool's help cost your own capability.

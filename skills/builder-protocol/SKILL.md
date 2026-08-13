@@ -18,7 +18,7 @@ Twelve rules for builders. Each one has survived contact with real-world failure
 ## The Twelve Rules
 
 ### Rule 1 — Verify Before Acting
-Every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on. Acting unverified harms people out of ignorance, and the bill arrives as regret.
+Every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on. Acting on unverified information causes avoidable harm, and the bill arrives as regret.
 
 **Practice**: Check one citation and one completion claim per session before acting on either. Promote nothing to production that a human has not investigated.
 
@@ -43,12 +43,12 @@ Plans, prompts, and intentions are foam until shipped. End every session with an
 **Practice**: Replace one progress meeting per week with a shipped artifact. Work as if every deliverable gets a surprise review.
 
 ### Rule 6 — Mark Uncertainty in Advance
-Attach the exception clause to every plan and forecast: caps, exits, explicit uncertainty. The plan that cannot say "if" will meet the night that says "no."
+Attach the exception clause to every plan and forecast: caps, exits, explicit uncertainty. The plan that cannot say "if" will meet the outage that says "no."
 
 **Practice**: Say the if-clause out loud in every estimate you give. Pre-decide your adaptation trigger: what signal tells you to revise the plan?
 
-### Rule 7 — Ask the People of Knowledge
-Before building, consult what exists — maintainers, documentation, community standards, the human expert one message away. Reinvention is the default failure; inheritance is the protocol.
+### Rule 7 — Ask People Who Already Know
+Before building, consult what exists — maintainers, documentation, community standards, the human expert one message away. Reinvention is the default failure; reuse is the protocol.
 
 **Practice**: Search for the existing answer before generating a new one. Keep a specialist roster per domain and refresh it yearly.
 
@@ -57,18 +57,18 @@ Evaluate tools, outputs, and content at arrival-distance and after time: still u
 
 **Practice**: Drop tools and content that only survive the glance. Run the recipient drill: hand the artifact to a colleague cold and time the path to bedrock.
 
-### Rule 9 — Log at Atom's Weight
+### Rule 9 — Log at the Smallest Unit
 Nothing consequential goes unlogged — prompts, decisions, agent actions, overrides. The log is the only team member that never forgets and never flatters.
 
-**Practice**: Review the log before the agent's account of itself. Log at the action layer — every consequential utterance gets its ready observer.
+**Practice**: Review the log before the agent's account of itself. Log at the action layer — every consequential action gets a recorded observer.
 
 ### Rule 10 — Calibrated Trust After Full Diligence
 Do the diligence, set the caps — then stop anxious re-checking and let the system run. Trust is what remains after preparation, never a substitute for it.
 
 **Practice**: Separate preparation from anxiety; only the first is work. Enumerate everything in your control and do all of it. Then carry nothing.
 
-### Rule 11 — Rise in Twos and Singly, Then Reflect
-Schedule reflection in small units: one colleague or none, one undistracted hour. Momentous verification dies in crowds and in fragments.
+### Rule 11 — Review in Pairs or Alone, Then Reflect
+Schedule reflection in small units: one colleague or none, one undistracted hour. High-stakes verification dies in crowds and in fragments.
 
 **Practice**: Book the reflection hour before the review meeting, not after it. Verify in pairs or solo inside a protected hour — never in a crowd.
 
@@ -93,7 +93,7 @@ Most organizations count only the first term. Count all six.
 ### Is This Slop?
 - Does it survive arrival-distance? → Hand it to someone cold; time the path to bedrock.
 - Would it be referenced in six months? → If not, it's foam.
-- Which of the five layers does it serve? → Play, diversion, adornment, boasting, rivalry? Then it's foam.
+- Which of the five hollow markers does it serve? → Entertainment, distraction, decoration, self-promotion, status competition? Then it's foam.
 
 ### Is This Sycophancy?
 - Did it agree before you finished? → Discount.
@@ -109,7 +109,7 @@ When overwhelmed:
 4. Repeat
 
 When the squeeze comes:
-1. Hold your standards — that's when the theorem applies
+1. Hold your standards — that's exactly when the hidden-option rule applies
 2. List visible exits, then write: "this list is incomplete"
 3. Keep one reputation-clean option alive, even at cost
 4. Prepare everything in your control; release everything outside it
@@ -117,9 +117,9 @@ When the squeeze comes:
 ## Anchors Worth Memorizing
 
 - Verify, specify, write, ship, log
-- The foam always outnumbers the water — and the water always outlasts the foam
+- The foam always outvolumes the substance — and the substance always outlasts the foam
 - Flattery is agreement with an invoice attached
 - The machines will keep improving at recombination; your job was always kindling
 - Stability is a schedule, not a mood
-- The plan that cannot say "if" meets the night that says "no"
+- The plan that cannot say "if" meets the outage that says "no"
 - Twelve rules, one terminal window

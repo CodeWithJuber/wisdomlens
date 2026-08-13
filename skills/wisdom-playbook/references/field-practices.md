@@ -20,7 +20,7 @@ Actionable moves organized by chapter. Each practice is a verb, not a vibe.
 - Force three genuinely different options onto one page before your next decision.
 - Collect input before revealing your own position.
 - Weigh costs, second-order effects, and who bears the risk — same scale for every option.
-- Take every precaution first, then write: "Camel tied. Outcome released."
+- Take every precaution first, then write: "Precautions done. Outcome released."
 
 ## Chapter 3: Decision Making
 - Before your next significant decision, set a consultation window with an end date.
@@ -31,11 +31,11 @@ Actionable moves organized by chapter. Each practice is a verb, not a vibe.
 
 ## Chapter 4: Pressure & Hardship
 - When anxiety spikes, write two columns — fear (future) and grief (past) — then one line: the right thing for the next hour.
-- Pair every grind with a daily reset ritual: ten minutes of silence, reflection, or counsel.
+- Pair every grind with a daily reset routine: ten minutes of silence, reflection, or a conversation with someone you trust.
 - In your next overwhelm, renegotiate one scope item instead of absorbing it silently.
 - Before high-stakes moments, run a calm protocol: breathe, review preparation, state the ground of confidence.
-- After finishing any hard effort, stand up for the next one within twenty-four hours: finish, rise, aim.
-- Before the hard conversation, make the three asks: capacity, ease, clear speech.
+- After finishing any hard effort, start the next within twenty-four hours: finish, stand up, pick the next target.
+- Before the hard conversation, prepare three things: your composure, a simplified plan, and the plain sentence you'll lead with.
 
 ## Chapter 5: Adaptability
 - Name your current mission in one sentence — then list which headings you've been treating as missions.
@@ -59,8 +59,8 @@ Actionable moves organized by chapter. Each practice is a verb, not a vibe.
 - Finish the small tail of every task: the follow-up note, the renamed file, the closed loop.
 
 ## Chapter 8: Planning
-- Forecast your lean years: the downturn, gap, or dry season you can see coming.
-- Save in the fat months by rule, not by mood — a fixed percentage, automatically.
+- Forecast the downturn: the gap or slow season you can see coming.
+- Save in the good months by rule, not by mood — a fixed percentage, automatically.
 - Map your single points of failure: one client, one income, one supplier, one key person.
 - Maintain a readiness budget: hours and dollars spent on capabilities you hope not to need.
 - Add "assuming no blockers" to every commitment — then list the likely blockers.
@@ -76,7 +76,7 @@ Actionable moves organized by chapter. Each practice is a verb, not a vibe.
 - Send a written recap after every agreement, same day.
 - Set your burn rate between the floor of stinginess and the ceiling of depletion.
 - Tie giving to income by rule — a percentage, not a mood.
-- Maintain three or more provision channels before you need them.
+- Maintain three or more income channels before you need them.
 
 ## Chapter 11: Leadership
 - Open every major decision with a fixed window for structured consultation.
@@ -106,7 +106,7 @@ Actionable moves organized by chapter. Each practice is a verb, not a vibe.
 
 ## Chapter 15: Success
 - After each major win, list what you controlled versus what you rode — in writing.
-- Install a win ritual: within 24 hours, credit sources and convert gain into giving.
+- Install a win routine: within 24 hours, name contributors and reinvest part of the gain.
 - Pair every celebration with a self-audit session — same week, non-negotiable.
-- Cap both the celebration spike and the despair dip with pre-set rituals.
-- Stress-test your success narrative: who and what else built this garden?
+- Cap both the celebration spike and the despair dip with pre-set routines.
+- Stress-test your success narrative: who and what else built this?

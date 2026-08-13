@@ -47,7 +47,7 @@ For Each:
 ### Before High-Stakes Moments:
 1. **Capacity**: Regulate your inner state first
 2. **Process**: Ease the task — simplify, sequence, remove friction
-3. **Voice**: Untie the communication — prepare the plain sentence
+3. **Voice**: Unblock the communication — prepare the plain sentence
 
 ### During Sustained Pressure:
 - Channel 1 (Internal): Strategic patience — hold the line without panic-decisions
@@ -55,7 +55,7 @@ For Each:
 - Both channels must stay open. Grit alone burns out; connection alone drifts.
 
 ### After Hard Effort:
-**Finish → Rise → Aim** (within 24 hours)
+**Finish → Stand Up → Pick the Next Target** (within 24 hours)
 
 ## The Recovery Loop
 
@@ -70,7 +70,7 @@ Name the fix ("my fault, and here is what changes")
     ↓
 Stop persisting (persistence is the expensive part)
     ↓
-Convert (acknowledge → redirect → produce good work)
+Convert (acknowledge → redirect → produce better work)
     ↓
 Recommission (end with restored mission, not reduced identity)
 ```
@@ -81,20 +81,20 @@ Recommission (end with restored mission, not reduced identity)
 
 After every win:
 1. **Attribution Audit**: List what you controlled vs. what you rode
-2. **Gratitude Exam**: Credit sources, convert gain into giving
+2. **Credit Check**: Name contributors, reinvest part of the gain
 3. **Self-Audit**: What did we get wrong that the win is hiding?
-4. **Equilibrium**: Cap the celebration spike — neither exult nor despair
-5. **Credit Transfer**: "This was willed, not willed by me" — before the story hardens
+4. **Equilibrium**: Cap the celebration spike — don't over-celebrate and don't spiral
+5. **Credit Transfer**: "This worked out; I didn't make it work out alone" — before the story hardens
 
 ## The Communication Hierarchy
 
 | Situation | Register | Rule |
 |-----------|----------|------|
-| Teaching | Wisdom first | Right content, right audience, right time |
-| Persuading | Beautiful delivery | Tone that informs without humiliating |
+| Teaching | Substance first | Right content, right audience, right time |
+| Persuading | Considerate delivery | Tone that informs without humiliating |
 | Debating | Better argument | Upgrade reasoning, not volume |
-| Under hostility | Gentle speech | The harder the stakeholder, the softer the register |
-| With provocateurs | "Peace" | Refuse to engage on their terms; starve the troll |
+| Under hostility | Measured tone | The harder the stakeholder, the softer the register |
+| With provocateurs | Disengage politely | Refuse to engage on their terms; starve the troll |
 | All speech | Straight | Direct, checkable, no weaponized ambiguity |
 
 ## The Leadership Operating System
@@ -106,4 +106,4 @@ After every win:
 5. **Unity**: Aligned rows beat brilliant individuals
 6. **Stewardship**: Every role is a loan with an audit date
 7. **Hiring**: Two axes — capability + integrity — scored independently
-8. **Building**: Mobilize resources, make beneficiaries co-builders, sequence stages, credit upward
+8. **Building**: Mobilize resources, make beneficiaries co-builders, sequence stages, share the credit

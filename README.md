@@ -2,7 +2,7 @@
 
 Universal operating principles for thinking, working, leading, and building in the AI age.
 
-Distilled from two source texts into actionable frameworks for modern professionals:
+Distilled into actionable frameworks for modern professionals:
 
 - **The Wisdom Playbook** — 20 chapters covering mind, work, people, and the core self
 - **The New Lens** — 16 chapters mapping AI-age failure modes and the builder's protocol
