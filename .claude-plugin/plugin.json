@@ -1,0 +1,26 @@
+{
+  "name": "wisdom-lens",
+  "version": "1.0.0",
+  "description": "Universal operating principles for thinking, working, leading, and building in the AI age. Distilled from ancient wisdom texts into actionable frameworks for modern professionals.",
+  "author": {
+    "name": "Zubair Shaikh"
+  },
+  "keywords": [
+    "wisdom",
+    "decision-making",
+    "leadership",
+    "AI-age",
+    "operating-principles",
+    "productivity",
+    "strategy",
+    "ethics"
+  ],
+  "homepage": "https://github.com/CodeWithJuber/wisdomlens",
+  "repository": "https://github.com/CodeWithJuber/wisdomlens",
+  "license": "MIT",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "agents": [
+    "./agents/wisdom-advisor.md"
+  ]
+}
