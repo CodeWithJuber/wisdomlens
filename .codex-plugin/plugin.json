@@ -1,0 +1,6 @@
+{
+  "name": "wisdom-lens",
+  "version": "1.2.1",
+  "description": "Decision frameworks, AI failure diagnostics, and operating principles for consequential work.",
+  "skills": "./skills/"
+}
