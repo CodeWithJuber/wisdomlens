@@ -1,6 +1,26 @@
 # Wisdom Lens
 
-Universal operating principles for thinking, working, leading, and building in the AI age.
+**Your agent writes code. Wisdom Lens makes it think before it ships.**
+
+Wisdom Lens is an instruction-only skill pack — an operating layer for your agent's judgment. Once installed, your agent starts checking its own work: it verifies claims before acting, specifies with numbers before building, ships artifacts instead of foam, and marks what it doesn't know.
+
+No new tools, no credentials, no network access. Just better thinking, installed in 30 seconds.
+
+## Why Wisdom Lens
+
+Most agent failures aren't capability failures. They're judgment failures. Wisdom Lens installs the checks that catch them:
+
+| The failure | The check that catches it |
+| --- | --- |
+| A "done" that was never verified | **Verify Before Acting** (Builder's Protocol, Rule 1): every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on |
+| Plans that are wishes, not plans | **Specify with Measure** (Rule 2): "Make it better" is not a spec; "under 200 lines, zero new dependencies, ships Friday" is — reject any plan without a number in it |
+| Doom loops: fail → apologize → fail again | **The Loop** (The New Lens, Ch. 1): a repetition tripwire — the same action three times means locked; halt, reset, restart clean |
+| Slop that dies in a day | **The Foam Check** (Stop hook): "Would this response still be useful in six months, or is it foam?" — if it's foam, revise before delivering |
+| Guesses delivered as facts | **Mark Uncertainty** (Stop hook): every response labels what's known vs. inferred vs. guessed |
+| Irreversible bets made blind | **The Probe Protocol** (Decision Engine): before irreversible commitments, run one low-cost, reversible test |
+| A single option sold as "the decision" | **Force three options** (Decision Engine): force three genuinely different options onto one page — including the option you dislike |
+
+Two automatic quality-control hooks run at the end of every response, so these aren't suggestions your agent reads once — they're checks it passes every time.
 
 ## Try it in 30 seconds (Claude Code)
 
@@ -17,7 +37,7 @@ Then test it with one prompt:
 Using the builder-protocol skill, walk me through Rule 1 — Verify Before Acting and apply it to my request.
 ```
 
-Start a new session after installing; the skills activate on demand. Other hosts: [Install and load](#install-and-load).
+Start a new session after installing; the skills activate on demand. Then give it a real task and watch the difference — every answer passes the two quality-control checks ([Hooks](#hooks)) before it reaches you. Other hosts: [Install and load](#install-and-load).
 
 Distilled into actionable frameworks for modern professionals:
 
@@ -43,12 +63,12 @@ Treat the skills as authorial interpretation and practical guidance—not origin
 
 ## Skills
 
-| Skill                | Triggers                                                                                                              |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **wisdom-playbook**  | Life advice, operating principles, pressure handling, leadership, conflict, communication, success/failure management |
-| **new-lens**         | AI failure modes, doom loops, hallucination, sycophancy, AI costs, black box problems, slop detection, memory issues  |
-| **decision-engine**  | Decisions, option evaluation, risk assessment, conflict resolution, strategic planning                                |
-| **builder-protocol** | Best practices for AI work, daily operating rules, productivity system, avoiding AI mistakes                          |
+| Skill                | What it gives you                                                                                                       |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **wisdom-playbook**  | 20 chapters of operating principles: thinking, pressure handling, leadership, communication, failure recovery, purpose |
+| **new-lens**         | 16 chapters mapping AI-age failure modes: doom loops, blind judgment, sycophancy, slop, black-box and memory problems |
+| **decision-engine**  | A six-stage decision loop (clarify → classify → diagnose → generate → decide → act) plus a probe protocol for irreversible calls |
+| **builder-protocol** | 12 daily operating rules for building with AI: verify before acting, specify with measure, ship artifacts, mark uncertainty |
 
 ## Agent
 
@@ -62,6 +82,12 @@ Two quality-control hooks fire at the end of every response:
 
 1. **Builder's Protocol Check** — Verify, specify, foam-check, mark uncertainty, attribute
 2. **Wisdom Lens Tone Check** — Straight speech, calibrated register, pressure awareness
+
+## Like what you see?
+
+- ⭐ **Star the repo** — it costs you nothing and tells other builders this is worth a look
+- 💬 **Try it** — the [30-second install](#try-it-in-30-seconds-claude-code) is all it takes
+- 🔁 **Share it** — with anyone whose agent still ships unverified "done"s
 
 ## References
 
