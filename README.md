@@ -44,6 +44,14 @@ Distilled into actionable frameworks for modern professionals:
 - **The Wisdom Playbook** — 20 chapters covering mind, work, people, and the core self
 - **The New Lens** — 16 chapters mapping AI-age failure modes and the builder's protocol
 
+## See it in action
+
+Every skill file in this repo is machine-checked before release — the repo's own validator running for real:
+
+![wisdomlens validator checking all skills](.github/assets/wisdomlens-validate.gif)
+
+`node scripts/validate.mjs`: `Validated 4 skills, 3 package manifests, 2 supporting JSON files, and relative references.` — exit 0.
+
 ## Install and load
 
 The same `skills/` directory is packaged without duplicated skill content:
