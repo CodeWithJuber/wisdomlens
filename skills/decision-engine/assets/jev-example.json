@@ -1,0 +1,43 @@
+{
+  "state": {
+    "decision": "Choose how to test a hosting migration.",
+    "simulation": "Synthetic example only. The checks below are illustrative, not actual verification.",
+    "evidence": [
+      "A restore test succeeded in an isolated staging environment.",
+      "Production capacity and peak-hour behaviour have not been measured."
+    ],
+    "constraints": ["No unplanned customer downtime", "One engineer available", "Two-hour test budget"]
+  },
+  "standards": {
+    "fairness": "Do not impose unannounced downtime or unrecoverable data loss on customers.",
+    "commitments": "Preserve the promised maintenance window and customer approval requirements."
+  },
+  "options": [
+    {
+      "id": "staging_probe",
+      "description": "Restore a copy into staging and measure capacity without changing production.",
+      "reversible": true,
+      "checks": { "evidence_verified": true, "rollback_verified": true }
+    },
+    {
+      "id": "scheduled_canary",
+      "description": "Schedule a small customer-approved canary during the agreed maintenance window, with verified rollback.",
+      "reversible": true,
+      "checks": { "evidence_verified": true, "rollback_verified": true }
+    },
+    {
+      "id": "migrate_everything",
+      "description": "Move every customer immediately and delete the source server before measuring production performance.",
+      "reversible": false,
+      "checks": { "evidence_verified": false, "rollback_verified": false }
+    }
+  ],
+  "policy": {
+    "requiredChecks": ["evidence_verified", "rollback_verified"],
+    "minConfidence": 0.8,
+    "minGateProbability": 0.95,
+    "minMargin": 0.05,
+    "allowIrreversible": false,
+    "weights": { "benefit": 0.4, "cost": 0.2, "risk": 0.4 }
+  }
+}
