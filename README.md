@@ -2,9 +2,9 @@
 
 **Your agent writes code. Wisdom Lens makes it think before it ships.**
 
-Wisdom Lens is an instruction-only skill pack — an operating layer for your agent's judgment. Once installed, your agent starts checking its own work: it verifies claims before acting, specifies with numbers before building, ships artifacts instead of foam, and marks what it doesn't know.
+Wisdom Lens provides an instruction-only core skill pack — an operating layer for your agent's judgment. Once installed, your agent starts checking its own work: it verifies claims before acting, specifies with numbers before building, ships artifacts instead of foam, and marks what it doesn't know.
 
-No new tools, no credentials, no network access. Just better thinking, installed in 30 seconds.
+The core needs no credentials or network access. An optional JEV adapter adds typed classification and scoring when explicitly configured and invoked.
 
 ## Why Wisdom Lens
 
@@ -61,7 +61,20 @@ The same `skills/` directory is packaged without duplicated skill content:
 - **Kimi Code CLI:** run `/plugins install https://github.com/CodeWithJuber/wisdomlens`, then `/reload`. Kimi reads `kimi.plugin.json`.
 - **OpenClaw:** review the bundle, then run `openclaw plugins install https://github.com/CodeWithJuber/wisdomlens --accept-capabilities`. OpenClaw maps the Codex bundle's skill root; the existing Claude prompt hooks are detected but not executed by OpenClaw.
 
-Start a new session after installation. These are instruction-only skills: they add no executable tools, credentials, or network access. Host permissions and approval policies still apply.
+Start a new session after installation. The core skills and prompt hooks require no credentials or network access. The optional JEV scripts are invoked separately and require a TypeSafe API key for live calls. Host permissions and approval policies still apply.
+
+## Optional JEV adapter
+
+Decision Engine can use JEV for problem classification and option scoring while application code applies the fairness, commitments, verification, and reversibility gates. It returns a recommendation, review, or blocked result; it never executes an action. The six-stage framework remains usable without JEV.
+
+Requires Node.js 20+ and no npm dependencies. Inspect the included synthetic request offline:
+
+```bash
+node skills/decision-engine/scripts/jev-decide.mjs \
+  --input skills/decision-engine/assets/jev-example.json --dry-run
+```
+
+For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the example with your own verified evidence and standards, then run the command without `--dry-run`. The default model is pinned to `jev-1.13.0`; `JEV_MODEL` overrides it. See [the integration reference](skills/decision-engine/references/jev-integration.md) for the application API, policy controls, and failure handling. Thresholds are configurable starting points, not validated accuracy guarantees.
 
 ## Provenance and safety
 
@@ -114,3 +127,5 @@ All terminology is universal and generic. The principles are framework-agnostic 
 ## Validation
 
 Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, package manifest, and the private-memory exclusion.
+
+Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline contract and decision-gate tests. These tests use simulated responses and do not establish live JEV accuracy.

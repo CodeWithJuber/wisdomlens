@@ -6,8 +6,10 @@ description: >
   "evaluate this choice", "risk assessment", "strategic planning",
   "conflict resolution approach", or needs a structured framework
   for navigating decisions, negotiations, or high-stakes situations.
+  Also use it when the user requests JEV or TypeSafe integration with
+  this decision framework, including typed scoring and decision gates.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Decision Engine — Structured Decision Frameworks
@@ -94,6 +96,26 @@ After every significant outcome:
 2. Credit contributors, conditions, and luck publicly
 3. If the outcome was a win: treat it as a prompt to credit contributors, not a victory lap
 4. If the outcome was a loss: refuse despair, rebuild the record — acknowledge, redirect, produce
+
+## Optional JEV / TypeSafe Adapter
+
+Use the bundled adapter only when JEV use is requested or already authorized for
+the selected data. Read [JEV integration](references/jev-integration.md) before
+calling it. The ordinary six-stage framework works without an API key or network.
+
+- Verify evidence with tools and generate the options before asking JEV to judge.
+- Supply explicit fairness and commitments standards, three distinct options,
+  and deterministic check results from actual verification.
+- Run `scripts/jev-decide.mjs` with a JSON input, or import the functions from
+  `scripts/jev-adapter.mjs` in the surrounding application.
+- Start with `--dry-run` and the synthetic `assets/jev-example.json` to inspect
+  the request without a network call. Store live credentials in `TYPESAFE_API_KEY`.
+- Treat `recommend` as advice for the selected option. Treat `review`, `blocked`,
+  and errors as reasons to gather evidence, run a probe, or consult a reviewer.
+- Keep execution in authorized tools or application code. Model confidence cannot
+  override failed checks, authorize actions, or establish factual correctness.
+- Preserve the six-stage loop: this adapter assists CLASSIFY and DECIDE; it does
+  not independently verify sources, prove causes, create options, or act.
 
 ## Quick-Reference Anchors
 
