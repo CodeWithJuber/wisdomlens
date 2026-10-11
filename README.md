@@ -20,7 +20,7 @@ Most agent failures aren't capability failures. They're judgment failures. Wisdo
 | Irreversible bets made blind | **The Probe Protocol** (Decision Engine): before irreversible commitments, run one low-cost, reversible test |
 | A single option sold as "the decision" | **Force three options** (Decision Engine): force three genuinely different options onto one page — including the option you dislike |
 
-Two automatic quality-control hooks run at the end of every response, so these aren't suggestions your agent reads once — they're checks it passes every time.
+Two automatic quality-control hooks run at the end of every response, and a repetition tripwire runs before every tool call, so these aren't suggestions your agent reads once — they're checks it passes every time.
 
 ## Try it in 30 seconds (Claude Code)
 
@@ -103,10 +103,11 @@ Treat the skills as authorial interpretation and practical guidance—not origin
 
 ## Hooks
 
-Two quality-control hooks fire at the end of every response:
+Three hooks keep the skills honest:
 
-1. **Builder's Protocol Check** — Verify, specify, foam-check, mark uncertainty, attribute
-2. **Wisdom Lens Tone Check** — Straight speech, calibrated register, pressure awareness
+1. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call (registered in `hooks/hooks.json`). Three consecutive identical tool calls (same tool + same normalized arguments) are blocked with a `HALT-LOOP` message; state is kept per session under `.wisdom-lens/`. The hook fails open — a broken hook never bricks the agent.
+2. **Builder's Protocol Check** (Stop) — Verify, specify, foam-check, mark uncertainty, attribute
+3. **Wisdom Lens Tone Check** (Stop) — Straight speech, calibrated register, pressure awareness
 
 ## Like what you see?
 
@@ -133,3 +134,5 @@ All terminology is universal and generic. The principles are framework-agnostic 
 Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, package manifest, and the private-memory exclusion.
 
 Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline contract and decision-gate tests. These tests use simulated responses and do not establish live JEV accuracy.
+
+Run `node scripts/skill-eval.mjs` for the scenario-eval harness: 45 scripted scenarios measuring whether prompts route to the skill their spec claims and whether scripted transcripts conform to each skill's checkable rules (current baseline: 45/45). Deterministic, no LLM calls — a live-agent behavior Δ needs an instrumented LLM loop and is out of scope.

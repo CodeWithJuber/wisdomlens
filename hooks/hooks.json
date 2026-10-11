@@ -21,6 +21,19 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tripwire-check.mjs\" --hook",
+            "timeout": 15,
+            "statusMessage": "Wisdom Lens tripwire: repetition check…"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

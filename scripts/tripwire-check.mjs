@@ -9,16 +9,23 @@
  *
  * Usage:
  *   node scripts/tripwire-check.mjs --self-test        # run built-in unit tests
+ *   node scripts/tripwire-check.mjs --hook             # PreToolUse hook: one hook payload on stdin
  *   node scripts/tripwire-check.mjs events.json        # scan a JSON array of {tool, args}
  *   cat events.json | node scripts/tripwire-check.mjs  # same, via stdin
  *
  * Sequence-scan mode exits 0 when no tripwire fires and 2 with the
  * HALT-LOOP message on stderr when one does.
  *
+ * Hook mode (`--hook`) consumes a single Claude Code PreToolUse payload from
+ * stdin, appends the event to per-session state, and blocks (exit 2) when
+ * the third consecutive identical call arrives. Registered in
+ * hooks/hooks.json so the tripwire actually runs before every tool call.
+ *
  * Dependency-free (node stdlib only). Importing this module performs no I/O.
  */
 
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const HALT_LOOP_MESSAGE = "HALT-LOOP: same action three times — halt and change approach";
@@ -85,6 +92,77 @@ export function scanSequence(events, limit = DEFAULT_LIMIT) {
     }
   }
   return null;
+}
+
+/** State directory for --hook mode; never throws. */
+export const HOOK_STATE_DIRNAME = ".wisdom-lens";
+export const HOOK_MAX_EVENTS = 100;
+
+/** Keep session ids filename-safe (no path traversal); fall back to "default". */
+export function sanitizeSessionId(sessionId) {
+  const clean = String(sessionId ?? "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
+  return clean || "default";
+}
+
+export function hookStateDir() {
+  return join(process.env.CLAUDE_PROJECT_DIR || process.cwd(), HOOK_STATE_DIRNAME);
+}
+
+export function hookStateFile(sessionId) {
+  return join(hookStateDir(), `tripwire-${sanitizeSessionId(sessionId)}.json`);
+}
+
+function readHookState(file) {
+  try {
+    const parsed = JSON.parse(readFileSync(file, "utf8"));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * --hook: consume one Claude Code PreToolUse payload from stdin.
+ *
+ * Appends {tool, args} to the per-session event log and blocks (exit 2,
+ * HALT-LOOP on stderr) when the third consecutive identical call arrives.
+ * Fail-open: any malformed payload or state error allows the tool call so a
+ * broken hook never bricks the agent session.
+ */
+export function hookMode() {
+  let payload;
+  try {
+    payload = JSON.parse(readFileSync(0, "utf8"));
+  } catch {
+    console.error("tripwire-check --hook: could not parse hook payload; allowing");
+    process.exit(0);
+  }
+  if (payload === null || typeof payload !== "object") {
+    console.error("tripwire-check --hook: hook payload is not an object; allowing");
+    process.exit(0);
+  }
+  const tool = payload.tool_name;
+  if (typeof tool !== "string" || tool.length === 0) {
+    // Not a tool-call payload (or a future event shape) — nothing to count.
+    process.exit(0);
+  }
+  const file = hookStateFile(payload.session_id);
+  const events = readHookState(file);
+  events.push({ tool, args: payload.tool_input ?? null });
+  const window = events.slice(-HOOK_MAX_EVENTS);
+  try {
+    mkdirSync(hookStateDir(), { recursive: true });
+    writeFileSync(file, JSON.stringify(window));
+  } catch (error) {
+    console.error(`tripwire-check --hook: cannot persist state (${error.message}); allowing`);
+    process.exit(0);
+  }
+  const trip = scanSequence(window);
+  if (trip) {
+    console.error(`${trip.message} (tool "${trip.tool}" repeated ${trip.count}x consecutively)`);
+    process.exit(2);
+  }
+  process.exit(0);
 }
 
 function assertSelfTest(condition, label) {
@@ -199,6 +277,7 @@ function usage() {
   return [
     "Usage:",
     "  node scripts/tripwire-check.mjs --self-test",
+    "  node scripts/tripwire-check.mjs --hook   # PreToolUse hook: one hook payload on stdin",
     "  node scripts/tripwire-check.mjs <events.json>",
     "  cat <events.json> | node scripts/tripwire-check.mjs",
     "",
@@ -208,6 +287,10 @@ function usage() {
 }
 
 function main(argv) {
+  if (argv.includes("--hook")) {
+    hookMode();
+    return;
+  }
   if (argv.includes("--self-test")) {
     try {
       const passed = selfTest();

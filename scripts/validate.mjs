@@ -119,6 +119,7 @@ for (const path of filesUnder(root)) {
 const checkScripts = [
   ["scripts/trigger-test.mjs", []],
   ["scripts/tripwire-check.mjs", ["--self-test"]],
+  ["scripts/skill-eval.mjs", []],
 ];
 for (const [script, args] of checkScripts) {
   const result = spawnSync(execPath, [join(root, script), ...args], { encoding: "utf8" });
