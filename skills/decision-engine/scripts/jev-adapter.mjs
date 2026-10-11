@@ -191,7 +191,7 @@ function normalizeDecision(input) {
   requireInput(record(result.standards) && text(result.standards.fairness) && text(result.standards.commitments),
     "Explicit fairness and commitments standards are required.");
   requireInput(Array.isArray(result.options) && result.options.length >= 3 && result.options.length <= 20,
-    "Supply 3–20 different options, including a reversible probe where practical.");
+    "Supply 3–20 different options, including a reversible probe where practical. One option is a trap; three is a decision (decision-engine anchor).");
   const ids = new Set();
   for (const option of result.options) {
     requireInput(record(option) && text(option.id) && text(option.description) && typeof option.reversible === "boolean",

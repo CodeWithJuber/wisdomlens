@@ -1,15 +1,24 @@
 ---
 name: builder-protocol
 description: >
-  This skill should be used when the user asks about "best practices for AI",
-  "how to work with AI agents", "AI workflow rules", "building protocol",
-  "operating system for work", "productivity system", "daily operating rules",
-  "how to avoid AI mistakes", "AI safety practices",
-  or needs a compact set of operating rules for professional work,
-  especially when building with or managing AI tools.
+  This skill should be used when the user says things like "done", "push it",
+  "ship it", "review this plan", "how should I run this", "spec this out",
+  "is this ready to merge", or needs a compact set of operating rules,
+  acceptance criteria, or a build-time workflow for professional work with
+  AI agents. Do not use when the user is asking why an AI output went wrong
+  (route to new-lens) or is weighing a choice between options
+  (route to decision-engine).
+license: MIT
 metadata:
   version: "1.0.0"
 ---
+
+## When NOT to Use
+
+- Do NOT use for one-shot trivial questions — a quick answer is not a build.
+- Do NOT use as a substitute for domain expertise — this is a process protocol, not knowledge.
+- Do NOT use to override the user's explicit instruction to keep it casual.
+- If the task completes in under ~10 minutes, apply the rules lightly: ship the artifact, skip the ceremony.
 
 # The Builder's Protocol — Daily Operating System
 
@@ -18,14 +27,14 @@ Twelve rules for builders. Each one has survived contact with real-world failure
 ## The Twelve Rules
 
 ### Rule 1 — Verify Before Acting
-Every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on. Acting on unverified information causes avoidable harm, and the bill arrives as regret.
+Acting on unverified information causes avoidable harm, and the bill arrives as regret.
 
-**Practice**: Check one citation and one completion claim per session before acting on either. Promote nothing to production that a human has not investigated.
+**Practice**: Every citation and every "done"/test-result claim must carry a `VERIFY:` line in the session log quoting the check performed and its outcome (e.g. `VERIFY: citation [x] — opened source, matches`). A "done" or "shipped" statement is a violation if no `VERIFY:` line for that claim precedes it in the transcript. At least one `VERIFY:` line must appear per session.
 
 ### Rule 2 — Specify with Measure
 Write quantities before any significant work: scope, budget, tolerance, stop conditions. "Make it better" is not a spec. "Under 200 lines, zero new dependencies, ships Friday" is.
 
-**Practice**: Reject any plan without a number in it. Write acceptance criteria before starting any task over one hour.
+**Practice**: Every plan block must contain at least one numeral (regex `/\d+/` on the plan text). Every plan for a task the agent estimates at >1 hour must include an `ACCEPTANCE:` section with ≥2 bullet criteria, written before the first implementation step in the transcript.
 
 ### Rule 3 — Write It Down, Degrade Gracefully
 Externalize state at every handoff. Design the degradation ladder: canonical doc → working notes → committed artifacts → escrowed state. Memory fails at transitions, not in storage.
@@ -50,7 +59,7 @@ Attach the exception clause to every plan and forecast: caps, exits, explicit un
 ### Rule 7 — Ask People Who Already Know
 Before building, consult what exists — maintainers, documentation, community standards, the human expert one message away. Reinvention is the default failure; reuse is the protocol.
 
-**Practice**: Search for the existing answer before generating a new one. Keep a specialist roster per domain and refresh it yearly.
+**Practice**: Before writing a new module, file, or >50-line change, the log must show one `SEARCHED:` line naming what was consulted (repo path, docs URL, or "no existing implementation found"). A greenfield file without a preceding `SEARCHED:` line is a violation. Keep a specialist roster per domain and refresh it yearly.
 
 ### Rule 8 — Judge by What Remains, Not by Foam
 Evaluate tools, outputs, and content at arrival-distance and after time: still used in six months, still true under rephrasing, still standing without the demo. Volume and polish are foam signals.

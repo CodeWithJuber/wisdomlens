@@ -1,5 +1,26 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Wisdom Lens skills are installed. Load the builder-protocol skill before writing, changing, or shipping any code, or before declaring any work done — trigger: building, coding, verifying, or shipping.",
+            "statusMessage": "Wisdom Lens: builder-protocol trigger armed…"
+          },
+          {
+            "type": "prompt",
+            "prompt": "Wisdom Lens skills are installed. Load the decision-engine skill when the user faces a decision, tradeoff, or irreversible commitment — trigger: deciding, choosing, risk assessment, or high-stakes planning.",
+            "statusMessage": "Wisdom Lens: decision-engine trigger armed…"
+          },
+          {
+            "type": "prompt",
+            "prompt": "Wisdom Lens skills are installed. Load the new-lens skill when the agent is stuck in a repetition loop, hallucinating, being sycophantic, or producing disposable slop — trigger: doom loops, repeated failures, AI failure modes.",
+            "statusMessage": "Wisdom Lens: new-lens trigger armed…"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

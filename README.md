@@ -39,9 +39,8 @@ Using the builder-protocol skill, walk me through Rule 1 — Verify Before Actin
 
 Start a new session after installing; the skills activate on demand. Then give it a real task and watch the difference — every answer passes the two quality-control checks ([Hooks](#hooks)) before it reaches you. Other hosts: [Install and load](#install-and-load).
 
-Distilled into actionable frameworks for modern professionals:
+Distilled into an actionable framework for modern professionals:
 
-- **The Wisdom Playbook** — 20 chapters covering mind, work, people, and the core self
 - **The New Lens** — 16 chapters mapping AI-age failure modes and the builder's protocol
 
 ## See it in action
@@ -50,9 +49,15 @@ Every skill file in this repo is machine-checked before release — the repo's o
 
 ![wisdomlens validator checking all skills](.github/assets/wisdomlens-validate.gif)
 
-`node scripts/validate.mjs`: `Validated 4 skills, 3 package manifests, 2 supporting JSON files, and relative references.` — exit 0.
+`node scripts/validate.mjs`: `Validated 3 skills, 3 package manifests, 2 supporting JSON files, and relative references.` — exit 0.
 
 ## Install and load
+
+The fastest way — one command, any host:
+
+```bash
+npx skills add CodeWithJuber/wisdomlens
+```
 
 The same `skills/` directory is packaged without duplicated skill content:
 
@@ -78,7 +83,7 @@ For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the ex
 
 ## Provenance and safety
 
-Wisdom Lens is an author-created operational synthesis presented through two named frameworks, **The Wisdom Playbook** and **The New Lens**. Earlier public repository metadata described the work as distilled from ancient wisdom texts, but this package does not include source passages or citation mappings sufficient to verify each principle against an original source.
+Wisdom Lens is an author-created operational synthesis presented through the named framework **The New Lens**. Earlier public repository metadata described the work as distilled from ancient wisdom texts, but this package does not include source passages or citation mappings sufficient to verify each principle against an original source.
 
 Treat the skills as authorial interpretation and practical guidance—not original source text, a canonical translation, a religious ruling, or professional legal, medical, financial, or safety advice. For consequential decisions, verify claims against primary sources and consult a qualified human where appropriate. The package contains repository-authored skill material only; it does not bundle user profiles, session logs, or private agent memory.
 
@@ -86,7 +91,6 @@ Treat the skills as authorial interpretation and practical guidance—not origin
 
 | Skill                | What it gives you                                                                                                       |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **wisdom-playbook**  | 20 chapters of operating principles: thinking, pressure handling, leadership, communication, failure recovery, purpose |
 | **new-lens**         | 16 chapters mapping AI-age failure modes: doom loops, blind judgment, sycophancy, slop, black-box and memory problems |
 | **decision-engine**  | A six-stage decision loop (clarify → classify → diagnose → generate → decide → act) plus a probe protocol for irreversible calls |
 | **builder-protocol** | 12 daily operating rules for building with AI: verify before acting, specify with measure, ship artifacts, mark uncertainty |
@@ -95,7 +99,7 @@ Treat the skills as authorial interpretation and practical guidance—not origin
 
 | Agent              | Purpose                                                                          |
 | ------------------ | -------------------------------------------------------------------------------- |
-| **wisdom-advisor** | Deep, multi-layered guidance synthesizing both frameworks for complex situations |
+| **wisdom-advisor** | Deep, multi-layered guidance for complex situations |
 
 ## Hooks
 

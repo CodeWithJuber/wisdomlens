@@ -1,17 +1,27 @@
 ---
 name: new-lens
 description: >
-  This skill should be used when the user asks about "AI failure modes",
-  "AI agent problems", "doom loops", "hallucination", "sycophancy",
-  "AI trust", "AI costs", "AI ethics", "building with AI",
-  "AI workflow issues", "black box AI", "AI slop", "AI memory problems",
-  "what AI can't do", "human-AI relationship", "AI oversight",
-  or needs guidance on operating principles for the AI age,
-  managing AI tools, avoiding AI pitfalls, or the builder's protocol.
+  This skill should be used when the user says things like "why did this fail",
+  "why did the agent loop", "stuck in a loop", "the AI agreed with everything",
+  "this output looks wrong", "where did it go off track", or asks about
+  "AI failure modes", "AI agent problems", "doom loops", "hallucination",
+  "sycophancy", "AI trust", "AI costs", "AI ethics", "AI workflow issues",
+  "black box AI", "AI slop", "AI memory problems", "what AI can't do",
+  "human-AI relationship", or "AI oversight". Diagnoses failure; it does not
+  create plans or content. Do not use for build-time workflow rules or
+  acceptance criteria (use builder-protocol), or for choosing between options
+  (use decision-engine).
+license: MIT
 metadata:
   version: "1.0.0"
   source: "The New Lens"
 ---
+
+## When NOT to Use
+
+- Do NOT use when generating marketing copy or content — this skill diagnoses failure; it does not create.
+- Do NOT use for non-AI topics — its failure modes assume an LLM agent in the loop.
+- Do NOT use to lecture a user who asked a simple question — match the dose to the stakes.
 
 # The New Lens — Operating Principles for the AI Age
 
@@ -24,7 +34,7 @@ The agent fails, apologizes, changes files, introduces new bugs — motion witho
 
 - **Every Clarifying Question Compounds Its Price**: Extract requirements sufficient to act, then act. A runnable test beats a refined question. Count your questions; treat each as cost against delivery.
 - **The Loop Breaks from the Inside**: Nothing external changes until something internal changes. Change the state — rewind, reset, restart clean.
-- **Locked Processors Don't Reflect**: Either you are reflecting, or something is locking the processor. Set a repetition tripwire: same action three times means locked — halt.
+- **Locked Processors Don't Reflect**: Either you are reflecting, or something is locking the processor. Emit `HALT-LOOP` and stop issuing tool calls after three consecutive identical tool calls (same tool name + same normalized arguments). The tripwire check is implemented in scripts/tripwire-check.mjs and runs as a pre-tool-call hook.
 - **The Loop's Last Hook Is the Finish Line**: Completion is the highest-temptation state. Define done, then be done. The loop's hardest exit is the step just before done.
 - **Question Discipline**: Gate every investigation with: what decision does this answer change? Questions with no operational consequence are scope creep wearing the mask of rigor.
 
@@ -66,7 +76,7 @@ The machine is past-bound by construction. Inherited bias scales silently.
 ### Chapter 6: Confident Guessing — Fluency Without Knowledge
 Hallucination is industrial now. 19.7% of recommended packages are fabricated.
 
-- **The Exchange Rate of Conjecture Is Zero**: No quantity of plausible guesses converts into truth. Tag every output: known, inferred, or guessed.
+- **The Exchange Rate of Conjecture Is Zero**: No quantity of plausible guesses converts into truth. Every factual claim in a deliverable (report, summary, review) must be followed by one of the tags [known], [inferred], or [guessed], citing the verification source. Deliverables are linted by skills-lint.mjs; an untagged factual claim fails the lint.
 - **Sign for Every Instrument**: Provenance-tracking as accountability. The relay carries the liability.
 - **The Distortion Is in the Delivery, Not the Source**: Fluent, citation-shaped output is the cheapest forgery of authority. Open the source.
 - **No Verdict Without Full Understanding**: A judgment issued without actually understanding the material is void. Accept and reject at the speed of your comprehension, not the model's fluency.
@@ -75,7 +85,7 @@ Hallucination is industrial now. 19.7% of recommended packages are fabricated.
 ## Part II — Failure Modes of the Workflow
 
 ### Chapter 7: Reinventing the Wheel — New Code Is the Disease
-AI writes new code instead of finding old code. Duplication up 81%, reuse down 70%.
+AI writes new code instead of finding old code. Duplication up 81%, reuse down 35%.
 
 - **Possession Is Not Use**: A repository full of tested libraries you never import is a library nobody reads. Index, name, surface what exists.
 - **The Fastest Fetch Uses What Already Exists**: Capability already instantiated beats capability rebuilt from zero. The strongest agent knows what is already written.

@@ -3,6 +3,8 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+import { execPath } from "node:process";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
@@ -109,6 +111,19 @@ for (const path of filesUnder(root)) {
   if (repoPath.startsWith(".git/")) continue;
   if (/(^|\/)(MEMORY\.md|USER\.md)$/i.test(repoPath) || /(^|\/)memory\//i.test(repoPath)) {
     fail(`${repoPath}: private agent-memory files must not be packaged`);
+  }
+}
+
+// Executable repo checks: each script must exit 0. They run here so that
+// `node scripts/validate.mjs` (and the CI step that calls it) covers them.
+const checkScripts = [
+  ["scripts/trigger-test.mjs", []],
+  ["scripts/tripwire-check.mjs", ["--self-test"]],
+];
+for (const [script, args] of checkScripts) {
+  const result = spawnSync(execPath, [join(root, script), ...args], { encoding: "utf8" });
+  if (result.status !== 0) {
+    fail(`${script}: executable check failed (exit ${result.status})\n${result.stdout}${result.stderr}`);
   }
 }
 

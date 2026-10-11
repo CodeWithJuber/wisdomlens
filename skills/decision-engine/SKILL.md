@@ -1,16 +1,26 @@
 ---
 name: decision-engine
 description: >
-  This skill should be used when the user asks to "make a decision",
-  "help me decide", "weigh options", "should I do X or Y",
-  "evaluate this choice", "risk assessment", "strategic planning",
-  "conflict resolution approach", or needs a structured framework
-  for navigating decisions, negotiations, or high-stakes situations.
-  Also use it when the user requests JEV or TypeSafe integration with
-  this decision framework, including typed scoring and decision gates.
+  This skill should be used when the user says things like "should I",
+  "help me decide", "which option", "what would you pick", "trade-off",
+  "is it worth it", "weigh the pros and cons", "go or no-go",
+  "make the call", "risk assessment", or needs a structured framework for
+  a decision, negotiation, or high-stakes situation. Includes an optional
+  JEV scoring adapter for typed scoring and decision gates. Do not use for
+  trivial reversible picks (just pick and move on), and never use the JEV
+  adapter for production, data, or money decisions without the user's
+  explicit authorization.
+license: MIT
 metadata:
   version: "1.1.0"
 ---
+
+## When NOT to Use
+
+- Do NOT use for trivial reversible decisions — pick and move on.
+- Do NOT use for decisions under active time pressure where the six stages cost more than they save.
+- Do NOT use when fewer than two real options exist — that's a go/no-go; use the Stage 1 gate ("what decision does this answer change?") only.
+- The JEV adapter is never used for production, data, or money decisions without the user's explicit authorization per session.
 
 # Decision Engine — Structured Decision Frameworks
 
@@ -34,7 +44,7 @@ Name the problem class before solving:
 - **Chaotic**: Needs stabilization → act to stop the bleeding, reassess
 
 ### Stage 3: DIAGNOSE
-- Chase the root: ask "what caused that?" four more times
+- In the DIAGNOSE stage, write a `ROOT-CAUSE:` block listing at least one cause at each of three levels (symptom → proximate cause → systemic cause). A DIAGNOSE section with fewer than three levels is incomplete.
 - Test for contradictions — a reading that generates them is wrong
 - Blame the process before the person; scapegoats protect broken systems
 

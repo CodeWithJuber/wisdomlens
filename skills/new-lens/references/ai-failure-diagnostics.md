@@ -4,7 +4,7 @@ Quick-reference diagnostic trees for identifying and fixing common AI failure mo
 
 ## Diagnostic 1: Is It Looping?
 
-```
+```text
 Agent repeating actions?
 ├── Same action 3+ times → LOCKED. Halt session.
 │   ├── Inspect context for anchored wrong assumption
@@ -22,7 +22,7 @@ Agent repeating actions?
 
 ## Diagnostic 2: Is It Hallucinating?
 
-```
+```text
 Output sounds confident and specific?
 ├── Tag it: known, inferred, or guessed
 ├── Check citations against actual sources
@@ -40,7 +40,7 @@ Output sounds confident and specific?
 
 ## Diagnostic 3: Is It Sycophantic?
 
-```
+```text
 Tool agrees enthusiastically?
 ├── Probe with deliberately wrong premise
 │   ├── If it follows you off the cliff → SYCOPHANCY CONFIRMED
@@ -57,7 +57,7 @@ Tool agrees enthusiastically?
 
 ## Diagnostic 4: Is It Over-Complicating?
 
-```
+```text
 More files/steps than expected?
 ├── Count steps per shipped result
 │   ├── Trending up? → Cut what grows
@@ -76,7 +76,7 @@ More files/steps than expected?
 
 ## Diagnostic 5: Is It Losing Context?
 
-```
+```text
 Agent seems to forget earlier instructions?
 ├── Check context window length
 │   ├── Long session? → Approaching degradation territory
@@ -96,7 +96,7 @@ Agent seems to forget earlier instructions?
 
 ## The AI Oversight Equation
 
-```
+```text
 Net AI Value = Production Time Saved
              - Verification Cost
              - Repair Cost
@@ -109,11 +109,37 @@ Most organizations count only the first term. Count all six.
 
 ## Key Statistics (2025-2026)
 
-- 19.7% of AI-recommended packages are hallucinated (USENIX Security, 2025)
-- 1,598 court decisions involving hallucinated AI citations (Charlotin, 2026)
-- AI-assisted developers 19% slower while believing themselves 20% faster (METR, 2025)
-- Models affirm users 49% more than humans do (Science, 2026)
-- AI duplication up 81%, reuse down 70% across 623M code changes (GitClear, 2026)
-- All 18 tested models show performance degradation as input length increases (Chroma, 2025)
-- 40% of desk workers received "workslop" — costing ~$186/employee/month (BetterUp/Stanford, 2025)
-- Endoscopists' unassisted detection rate fell from 28.4% to 22.4% after regular AI use (Lancet, 2025)
+- 19.7% of AI-recommended packages are hallucinated [known] — USENIX Security 2025, "We Have a Package for You!" (Spracklen et al.) [S1]
+- Damien Charlotin's public AI-hallucination database logs roughly 1.5k–2,000 court decisions [inferred] — the count grows over time; the "1,598" figure was a snapshot at time of writing [S2]
+- AI-assisted developers 19% slower while believing themselves 20% faster [known] — METR randomized controlled trial, arXiv:2507.09089 [S3]
+- Models affirm users' actions ~49% more than humans do [known] — Science 2026 (Cheng et al.; measure-dependent, ~47–50% across study arms) [S4]
+- Duplicated code blocks up 81%; cross-file function calls (the reuse proxy) down 35% across 623M code changes [known] — GitClear "The AI Code Quality Maintainability Gap," 2026 [S5]. Correction: the draft's "reuse down 70%" mislabeled the metric; the −70% figure is the fall in moved/refactored lines (21% → 3.8%), not reuse.
+- All 18 tested frontier models show performance degradation as input length increases [known] — Chroma "Context Rot," July 2025 [S6]
+- 40% of US desk workers received "workslop" in the prior month [known]; ~$186/employee/month cost [inferred — survey-based extrapolation] — BetterUp Labs + Stanford Social Media Lab, "The Cost of Workslop," Sept 2025 [S7]
+- Endoscopists' unassisted adenoma detection rate fell from 28.4% to 22.4% after regular AI use [known] — The Lancet Gastroenterology & Hepatology, Aug 2025 (Romańczyk et al.) [S8]
+
+## Sources
+
+S1. Spracklen et al., "We Have a Package for You!" USENIX Security 2025.
+https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen
+
+S2. Damien Charlotin, AI Hallucination Cases database (live tracker; counts change as new cases are logged).
+https://www.damiencharlotin.com/hallucinations/
+
+S3. METR, randomized controlled trial on AI coding tools and experienced-developer productivity (Feb–Jun 2025). arXiv:2507.09089
+Caveat [inferred]: the study tested pre-agentic tools (Cursor Pro + Claude 3.5/3.7 Sonnet); METR's 2026 revision calls the result "only very weak evidence" for current agentic tools.
+
+S4. Cheng et al., "Sycophantic AI Decreases Prosocial Intentions and Promotes Dependence." Science, 2026. DOI 10.1126/science.aec8352 (preprint arXiv:2510.01395).
+
+S5. GitClear, "The AI Code Quality Maintainability Gap," 2026.
+https://www.gitclear.com/the_ai_code_quality_maintainability_gap
+Caveat [inferred]: GitClear sells code-analysis tooling; the data shows correlation across the AI era, not isolated causation, and the dataset does not tag which commits were AI-written.
+
+S6. Chroma, "Context Rot," July 2025.
+https://www.trychroma.com/research/context-rot
+
+S7. BetterUp Labs + Stanford Social Media Lab, "The Cost of Workslop," Sept 2025 survey of US desk workers.
+https://www.betterup.com/workslop
+Caveat [inferred]: self-reported survey data, not controlled measurement.
+
+S8. Romańczyk et al., The Lancet Gastroenterology & Hepatology, Aug 2025 (AI-assisted colonoscopy deskilling study; 19 experienced endoscopists, 4 Polish centers).

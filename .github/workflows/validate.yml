@@ -17,4 +17,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node scripts/validate.mjs
+      - run: node scripts/trigger-test.mjs
+      - run: node scripts/tripwire-check.mjs --self-test
       - run: node --test tests/jev-adapter.test.mjs
+      - run: node --test tests/tripwire-check.test.mjs
