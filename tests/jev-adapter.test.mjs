@@ -292,6 +292,27 @@ test("invalid decision policy, missing standards, and duplicate options are reje
   }
 });
 
+test("one-option decisions are rejected: one option is a trap", () => {
+  const decision = input();
+  decision.options = [decision.options[0]];
+  assert.throws(() => buildDecisionRequest(decision),
+    (error) => error.code === "invalid_request" && error.message.includes("One option is a trap"));
+});
+
+test("two-option decisions are rejected: three is a decision", () => {
+  const decision = input();
+  decision.options = decision.options.slice(0, 2);
+  assert.throws(() => buildDecisionRequest(decision),
+    (error) => error.code === "invalid_request" && error.message.includes("three is a decision"));
+});
+
+test("exactly three options is the minimum that passes validation", () => {
+  const decision = input();
+  decision.options = decision.options.slice(0, 3);
+  const request = buildDecisionRequest(decision);
+  assert.equal(Object.keys(request.questions).length, 16);
+});
+
 test("CLI dry-run works without credentials and makes no API call", () => {
   const child = spawnSync(process.execPath, [cli, "--input", fileURLToPath(exampleUrl), "--dry-run"],
     { encoding: "utf8", env: { ...process.env, TYPESAFE_API_KEY: "", JEV_MODEL: "jev-1.13.0" } });

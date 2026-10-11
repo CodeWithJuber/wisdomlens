@@ -59,7 +59,7 @@ For Each:
 
 ## The Recovery Loop
 
-```
+```text
 Error occurs
     ↓
 Notice (don't deny)
