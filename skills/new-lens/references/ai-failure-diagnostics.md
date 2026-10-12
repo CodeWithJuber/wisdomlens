@@ -121,7 +121,7 @@ Most organizations count only the first term. Count all six.
 ## Sources
 
 S1. Spracklen et al., "We Have a Package for You!" USENIX Security 2025.
-https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen
+https://arxiv.org/abs/2406.10279
 reverify-by: 2027-04-01
 
 S2. Damien Charlotin, AI Hallucination Cases database (live tracker; counts change as new cases are logged).
