@@ -64,6 +64,38 @@ test("a real HTTP-shaped assessment uses the official endpoint and all three pri
 
 const own = (value, key) => Object.hasOwn(value, key);
 
+test("question shapes match the server-side API contract (verified 2026-10-12)", () => {
+  // Server contract per docs.typesafe.ai/primitives: questions is a dict keyed
+  // by id; choice criteria is a dict keyed by candidate; score criteria is an
+  // ordered array of 2–10 level descriptions (index = level number); noul
+  // criteria is an optional {true, false} dict. A criteria-shape mismatch 422s
+  // server-side, so the adapter must emit exactly these shapes.
+  const { questions } = request();
+  assert.ok(questions && typeof questions === "object" && !Array.isArray(questions));
+  assert.ok(Object.keys(questions).length > 0);
+  for (const [id, question] of Object.entries(questions)) {
+    assert.ok(question.instructions, `${id}: instructions required`);
+    if (question.type === "choice") {
+      assert.ok(question.criteria && typeof question.criteria === "object" && !Array.isArray(question.criteria),
+        `${id}: choice criteria must be a dict keyed by candidate`);
+    } else if (question.type === "score") {
+      assert.ok(Array.isArray(question.criteria),
+        `${id}: score criteria must be an ordered array, not a dict`);
+      assert.ok(question.criteria.length >= 2 && question.criteria.length <= 10,
+        `${id}: score criteria must carry 2–10 levels`);
+      assert.ok(question.criteria.every((level) => typeof level === "string"),
+        `${id}: score levels must be descriptions`);
+    } else if (question.type === "noul") {
+      if (own(question, "criteria")) {
+        assert.ok(own(question.criteria, "true") && own(question.criteria, "false"),
+          `${id}: noul criteria must describe true and false`);
+      }
+    } else {
+      assert.fail(`${id}: unknown question type ${question.type}`);
+    }
+  }
+});
+
 test("request building and policy evaluation leave caller input unchanged", () => {
   const decision = input();
   delete decision.policy;

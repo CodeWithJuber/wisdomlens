@@ -13,6 +13,7 @@ description: >
 license: MIT
 metadata:
   version: "1.1.0"
+  last_verified: "2026-10-12"
 ---
 
 ## When NOT to Use
@@ -74,6 +75,33 @@ Before irreversible commitments:
 3. Prefer reversible commitments while information is still arriving
 4. Resist the aggressive option while the probe is in transit
 
+## Below-Threshold Play (JEV confidence under minConfidence)
+
+A JEV answer below the policy's `minConfidence` (default 0.8) is **non-binding**.
+It is a signal to narrow the question, not a verdict to narrate. Never present
+a sub-threshold result as the decision; never let a low-confidence answer
+authorize an action. Run this play instead:
+
+1. **Name the blocker.** Which question came back uncertain — the class, the
+   benefit, the cost, the risk, or a fairness/commitments standard? State it.
+2. **Check whether it's even a decision.** If fewer than two real options
+   remain, this is a go/no-go, not a framework problem — answer the Stage 1
+   gate ("what decision does this answer change?") and stop.
+3. **Narrow the state.** An uncertain answer usually means the state was too
+   broad. Restate the question against one concrete field (`state.key`) instead
+   of the whole situation.
+4. **Run a cheap probe.** If the uncertainty is about the world, not the
+   question, gather one piece of real evidence and re-ask. Uncertainty
+   resolved by evidence is the point of the framework.
+5. **Re-ask with tighter criteria.** If the uncertainty is about the question,
+   sharpen the instructions or add a level to the score rubric, then re-ask.
+6. **Only then decide.** If confidence is still under threshold after one
+   narrowing pass and one probe, route to review (a human or a second agent),
+   not to yourself narrating a "probably". Non-binding means non-binding.
+
+A below-threshold `recommend` is a `review` — the adapter already encodes this;
+this section tells you what to do in the review.
+
 ## Conflict Resolution Framework
 
 ### Level 1: Answer One Level Above
@@ -126,6 +154,26 @@ calling it. The ordinary six-stage framework works without an API key or network
   override failed checks, authorize actions, or establish factual correctness.
 - Preserve the six-stage loop: this adapter assists CLASSIFY and DECIDE; it does
   not independently verify sources, prove causes, create options, or act.
+
+## Decision Logging Rule
+
+Log the JEV call **verbatim** before narrating it in chat. The log entry is
+the record; the chat reply is the summary. Narrating from memory is how a
+judgment gets mischaracterized after the fact.
+
+Write, in order, before any chat summary:
+
+1. The exact question text (`instructions`) sent for each question id.
+2. The exact criteria sent (option keys for choice; levels for score).
+3. The state summary supplied — what evidence the model actually saw.
+4. The exact response: scores, probabilities, confidence, per question id.
+5. The policy outcome applied (`recommend` / `review` / `blocked`) and which
+   threshold or gate produced it.
+
+The chat reply then reports what changed as a result — never substitutes for
+the log. Rule: if a claim about "what JEV said" appears in chat without a
+matching verbatim log entry, it is unverified foam under builder-protocol
+Rule 1.
 
 ## Quick-Reference Anchors
 

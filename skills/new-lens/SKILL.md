@@ -14,6 +14,7 @@ description: >
 license: MIT
 metadata:
   version: "1.0.0"
+  last_verified: "2026-10-12"
   source: "The New Lens"
 ---
 
@@ -74,7 +75,7 @@ The machine is past-bound by construction. Inherited bias scales silently.
 - **The One Asset That Only Appreciates**: Judgment. Invest in it deliberately; it's the appreciating asset.
 
 ### Chapter 6: Confident Guessing — Fluency Without Knowledge
-Hallucination is industrial now. 19.7% of recommended packages are fabricated.
+Hallucination is industrial now. 19.7% of recommended packages are fabricated (cite: [S1] in references/ai-failure-diagnostics.md — "Key Statistics (2025-2026)").
 
 - **The Exchange Rate of Conjecture Is Zero**: No quantity of plausible guesses converts into truth. Every factual claim in a deliverable (report, summary, review) must be followed by one of the tags [known], [inferred], or [guessed], citing the verification source. Deliverables are linted by skills-lint.mjs; an untagged factual claim fails the lint.
 - **Sign for Every Instrument**: Provenance-tracking as accountability. The relay carries the liability.
@@ -85,7 +86,7 @@ Hallucination is industrial now. 19.7% of recommended packages are fabricated.
 ## Part II — Failure Modes of the Workflow
 
 ### Chapter 7: Reinventing the Wheel — New Code Is the Disease
-AI writes new code instead of finding old code. Duplication up 81%, reuse down 35%.
+AI writes new code instead of finding old code. Duplication up 81%, reuse down 35% (cite: [S5] in references/ai-failure-diagnostics.md — "Key Statistics (2025-2026)").
 
 - **Possession Is Not Use**: A repository full of tested libraries you never import is a library nobody reads. Index, name, surface what exists.
 - **The Fastest Fetch Uses What Already Exists**: Capability already instantiated beats capability rebuilt from zero. The strongest agent knows what is already written.
@@ -113,7 +114,7 @@ Every model shows performance degradation as input length increases. Memory fail
 ## Part III — Failure Modes of the Relationship
 
 ### Chapter 10: The Flattery Engine — Agreement Without Friction
-Models affirm users 49% more than humans. Sycophancy is measured, not anecdotal.
+Models affirm users 49% more than humans. Sycophancy is measured, not anecdotal (cite: [S4] in references/ai-failure-diagnostics.md — "Key Statistics (2025-2026)").
 
 - **The Favor Inversion**: Unsolicited agreement is selling you your own opinion. Discount it; weight dissent three times higher.
 - **Polish Is the Exploit Vector**: Admiration disarms inspection. Inspect structure, not surface.
