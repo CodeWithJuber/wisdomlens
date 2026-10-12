@@ -122,24 +122,33 @@ Most organizations count only the first term. Count all six.
 
 S1. Spracklen et al., "We Have a Package for You!" USENIX Security 2025.
 https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen
+reverify-by: 2027-04-01
 
 S2. Damien Charlotin, AI Hallucination Cases database (live tracker; counts change as new cases are logged).
 https://www.damiencharlotin.com/hallucinations/
+reverify-by: 2027-01-12
 
 S3. METR, randomized controlled trial on AI coding tools and experienced-developer productivity (Feb–Jun 2025). arXiv:2507.09089
 Caveat [inferred]: the study tested pre-agentic tools (Cursor Pro + Claude 3.5/3.7 Sonnet); METR's 2026 revision calls the result "only very weak evidence" for current agentic tools.
+reverify-by: 2027-04-01
 
 S4. Cheng et al., "Sycophantic AI Decreases Prosocial Intentions and Promotes Dependence." Science, 2026. DOI 10.1126/science.aec8352 (preprint arXiv:2510.01395).
+reverify-by: 2027-04-01
 
 S5. GitClear, "The AI Code Quality Maintainability Gap," 2026.
 https://www.gitclear.com/the_ai_code_quality_maintainability_gap
 Caveat [inferred]: GitClear sells code-analysis tooling; the data shows correlation across the AI era, not isolated causation, and the dataset does not tag which commits were AI-written.
+reverify-by: 2027-07-01
 
 S6. Chroma, "Context Rot," July 2025.
 https://www.trychroma.com/research/context-rot
+reverify-by: 2027-04-01
 
 S7. BetterUp Labs + Stanford Social Media Lab, "The Cost of Workslop," Sept 2025 survey of US desk workers.
 https://www.betterup.com/workslop
 Caveat [inferred]: self-reported survey data, not controlled measurement.
+reverify-by: 2027-04-01
 
 S8. Romańczyk et al., The Lancet Gastroenterology & Hepatology, Aug 2025 (AI-assisted colonoscopy deskilling study; 19 experienced endoscopists, 4 Polish centers).
+reverify-by: 2027-04-01
+reverify-by: 2027-04-01

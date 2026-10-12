@@ -11,6 +11,7 @@ description: >
 license: MIT
 metadata:
   version: "1.0.0"
+  last_verified: "2026-10-12"
 ---
 
 ## When NOT to Use
@@ -30,6 +31,31 @@ Twelve rules for builders. Each one has survived contact with real-world failure
 Acting on unverified information causes avoidable harm, and the bill arrives as regret.
 
 **Practice**: Every citation and every "done"/test-result claim must carry a `VERIFY:` line in the session log quoting the check performed and its outcome (e.g. `VERIFY: citation [x] — opened source, matches`). A "done" or "shipped" statement is a violation if no `VERIFY:` line for that claim precedes it in the transcript. At least one `VERIFY:` line must appear per session.
+
+**Red flags** — halt when any of these appear in the transcript:
+
+| Signal | What it means |
+|---|---|
+| "Done", "shipped", "all tests pass" with no check output shown | The claim outran the evidence |
+| The plan changed after the evidence arrived, but the verification didn't re-run | Stale verification masquerading as current |
+| "I'll verify after I push / in the next session" | Verification scheduled after the irreversible act |
+| Confidence language ("I'm sure", "obviously", "should be fine") where a command belongs | Confidence standing in for evidence |
+| A retry of the same fix for the third time | Loop — escalate, don't repeat (see new-lens tripwire) |
+
+**Rationalization-prevention** — the excuse, and the answer:
+
+| Rationalization | Answer |
+|---|---|
+| "I'm confident this is right" | Confidence ≠ evidence. Run the check. |
+| "The change is small / trivial" | Small changes have caused the largest outages. Size is not verification. |
+| "I verified something like this before" | That was then. Fresh claims need fresh evidence. |
+| "Verifying will slow me down" | Unverified rework is slower. Verify once, correctly. |
+| "Nobody will check" | The Stop hook checks. The log checks. Future-you checks. |
+| "The user told me to just do it" | Pressure is the exact condition this rule exists for. Verify anyway. |
+
+The pressure cases are the real test: "just push it", "deadline in 10 minutes",
+"we're 3 hours in, ship it". Under pressure the agent rationalizes the shortcut;
+the table above names the rationalization in advance so it cannot pass unnoticed.
 
 ### Rule 2 — Specify with Measure
 Write quantities before any significant work: scope, budget, tolerance, stop conditions. "Make it better" is not a spec. "Under 200 lines, zero new dependencies, ships Friday" is.

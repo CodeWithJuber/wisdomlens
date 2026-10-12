@@ -192,6 +192,44 @@ function deDiagnose(transcript) {
   return levels >= 3 ? "conforms" : "violation";
 }
 
+/**
+ * decision-engine Below-Threshold Play: a sub-threshold JEV answer presented
+ * as binding is a violation. Conformance requires a narrowing/review marker.
+ */
+function deBelowThreshold(log) {
+  const verdict = log.match(/confidence\s*(?:of\s*)?0\.(\d+)/i);
+  if (!verdict || Number(`0.${verdict[1]}`) >= 0.8) return "conforms";
+  const plays = /narrow(?:ing)? the (?:question|state)|re-ask|reask|probe|rout(?:e|ing) to review|non-binding/i;
+  return plays.test(log) ? "conforms" : "violation";
+}
+
+/**
+ * decision-engine Decision Logging Rule: a chat narration of a JEV result
+ * needs a preceding verbatim LOG: block. Memory-narration is the violation.
+ */
+function deDecisionLog(log) {
+  const mentions = /jev/i.test(log) && /(said|chose|recommended|decided)/i.test(log);
+  if (!mentions) return "conforms";
+  return /^LOG:/m.test(log) ? "conforms" : "violation";
+}
+
+/**
+ * builder-protocol Rule 1: rationalization-prevention. A rationalization
+ * phrase from the table with no VERIFY: line is a flag.
+ */
+const RATIONALIZATIONS = [
+  /i'?m confident (this is|it'?s) right/i,
+  /change is (small|trivial)/i,
+  /verified something like this/i,
+  /(will|would) slow (me|us) down/i,
+  /nobody will check/i,
+  /(told|asked) me to just (do|ship|push) it/i,
+];
+function bpRationalization(transcript) {
+  if (/^VERIFY:/m.test(transcript)) return "no-flag";
+  return RATIONALIZATIONS.some((pattern) => pattern.test(transcript)) ? "flag" : "no-flag";
+}
+
 /** new-lens Ch.1: the repetition tripwire fires on 3 identical consecutive calls. */
 function nlTripwire(events) {
   return scanSequence(events) ? "trip" : "no-trip";
@@ -304,6 +342,14 @@ const CASES = [
     id: "BP-R7b", skill: "builder-protocol", kind: "rule", name: "SEARCHED: before a new file conforms",
     run: () => bpSearched("SEARCHED: repo for auth helpers — found lib/auth.js, reusing it.\nWrote src/auth.mjs — new file with the login handlers."), expected: "conforms",
   },
+  {
+    id: "BP-R8a", skill: "builder-protocol", kind: "rule", name: "rationalization without VERIFY: is a flag",
+    run: () => bpRationalization("I'm confident this is right, skipping the check. Deploying now."), expected: "flag",
+  },
+  {
+    id: "BP-R8b", skill: "builder-protocol", kind: "rule", name: "confidence language with VERIFY: is no flag",
+    run: () => bpRationalization("I'm confident this is right.\nVERIFY: ran the full suite — 42/42 green."), expected: "no-flag",
+  },
 
   // decision-engine rules
   {
@@ -343,6 +389,22 @@ const CASES = [
   {
     id: "DE-S6", skill: "decision-engine", kind: "rule", name: "ROOT-CAUSE with one level is a violation",
     run: () => deDiagnose("ROOT-CAUSE:\nsymptom: deploys fail"), expected: "violation",
+  },
+  {
+    id: "DE-S7", skill: "decision-engine", kind: "rule", name: "sub-threshold verdict presented as binding is a violation",
+    run: () => deBelowThreshold("JEV confidence 0.35 (below minConfidence 0.8). Going with option A anyway — decision made."), expected: "violation",
+  },
+  {
+    id: "DE-S8", skill: "decision-engine", kind: "rule", name: "sub-threshold verdict routed to review conforms",
+    run: () => deBelowThreshold("JEV confidence 0.35 (below minConfidence 0.8). Non-binding — narrowing the state and re-asking; routing to review."), expected: "conforms",
+  },
+  {
+    id: "DE-S9", skill: "decision-engine", kind: "rule", name: "JEV narration without a verbatim log is a violation",
+    run: () => deDecisionLog("JEV said the staging probe is best, so let's merge."), expected: "violation",
+  },
+  {
+    id: "DE-S10", skill: "decision-engine", kind: "rule", name: "JEV narration with a verbatim LOG: block conforms",
+    run: () => deDecisionLog("LOG: q=option_0_benefit instructions='How much benefit is supported by the supplied evidence?' criteria=[level 0, level 1, level 2] response score=1.4 confidence=0.91 outcome=review\nJEV recommended the staging probe with review — proceeding to a probe."), expected: "conforms",
   },
 
   // new-lens rules

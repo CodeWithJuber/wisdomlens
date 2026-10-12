@@ -72,6 +72,24 @@ The default policy is illustrative and has not been calibrated on your tasks:
 The three Score rubrics use levels 0–2. Code computes a comparison heuristic:
 `utility = (benefit_weight * benefit - cost_weight * cost - risk_weight * risk) / 2`.
 This is neither an expected monetary value nor a measured probability of success.
+
+## Question-shape contract (server-side, verified 2026-10-12)
+
+Against the current TypeSafe API, per the official primitives documentation:
+
+- **choice**: `criteria` is a **dict** mapping option key → description (1–255
+  options). The criteria KEYS are the candidates.
+- **score**: `criteria` is an **ordered array** of level descriptions, 2–10
+  levels (the API rejects 11+). The level number is the array index, starting
+  at 0. The response's `score` is a position on that spectrum and can fall
+  between levels.
+- **noul**: `criteria` is an optional dict with `true`/`false` descriptions.
+
+`questions` is always a **dict keyed by question id**, never a list.
+`instructions` carries the question text for every type. This contract is
+pinned in `tests/jev-adapter.test.mjs` (score-shape contract test); if the
+provider changes the accepted shapes, update the adapter and the test together.
+
 Risk/cost caps, fairness, commitments, and deterministic checks are separate gates, never terms
 that a large benefit can outweigh. Reversibility and check flags are assertions
 by the trusted caller: the adapter does not verify them itself.

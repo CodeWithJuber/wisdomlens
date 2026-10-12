@@ -81,12 +81,6 @@ node skills/decision-engine/scripts/jev-decide.mjs \
 
 For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the example with your own verified evidence and standards, then run the command without `--dry-run`. The default model is pinned to `jev-1.13.0`; `JEV_MODEL` overrides it. See [the integration reference](skills/decision-engine/references/jev-integration.md) for the application API, policy controls, and failure handling. Thresholds are configurable starting points, not validated accuracy guarantees.
 
-## Provenance and safety
-
-Wisdom Lens is an author-created operational synthesis presented through the named framework **The New Lens**. Earlier public repository metadata described the work as distilled from ancient wisdom texts, but this package does not include source passages or citation mappings sufficient to verify each principle against an original source.
-
-Treat the skills as authorial interpretation and practical guidance—not original source text, a canonical translation, a religious ruling, or professional legal, medical, financial, or safety advice. For consequential decisions, verify claims against primary sources and consult a qualified human where appropriate. The package contains repository-authored skill material only; it does not bundle user profiles, session logs, or private agent memory.
-
 ## Skills
 
 | Skill                | What it gives you                                                                                                       |
@@ -94,6 +88,8 @@ Treat the skills as authorial interpretation and practical guidance—not origin
 | **new-lens**         | 16 chapters mapping AI-age failure modes: doom loops, blind judgment, sycophancy, slop, black-box and memory problems |
 | **decision-engine**  | A six-stage decision loop (clarify → classify → diagnose → generate → decide → act) plus a probe protocol for irreversible calls |
 | **builder-protocol** | 12 daily operating rules for building with AI: verify before acting, specify with measure, ship artifacts, mark uncertainty |
+
+Multiple skills can fire on the same prompt. See [skill-routing](skills/decision-engine/references/skill-routing.md) for the conflict matrix, precedence rules, and the "minimum useful skills" selection rule.
 
 ## Agent
 
@@ -125,6 +121,8 @@ Each skill includes detailed reference files:
 - **AI Failure Diagnostics** — Quick-reference diagnostic trees
 - **Decision Frameworks** — Structured tools for decisions, risk, conflict, recovery
 
+[SECURITY.md](SECURITY.md) documents the threat model (instruction-only by design), the supply-chain posture, and the install-trust checklist for third-party skills.
+
 ## Philosophy
 
 All terminology is universal and generic. The principles are framework-agnostic and apply to any professional context — leadership, product development, team management, personal growth, or building with AI tools.
@@ -135,4 +133,14 @@ Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, dir
 
 Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline contract and decision-gate tests. These tests use simulated responses and do not establish live JEV accuracy.
 
-Run `node scripts/skill-eval.mjs` for the scenario-eval harness: 45 scripted scenarios measuring whether prompts route to the skill their spec claims and whether scripted transcripts conform to each skill's checkable rules (current baseline: 45/45). Deterministic, no LLM calls — a live-agent behavior Δ needs an instrumented LLM loop and is out of scope.
+Run `node scripts/skill-eval.mjs` for the scenario-eval harness: 51 scripted scenarios measuring whether prompts route to the skill their spec claims and whether scripted transcripts conform to each skill's checkable rules (current baseline: 51/51). Deterministic, no LLM calls — a live-agent behavior Δ needs an instrumented LLM loop and is out of scope.
+
+Run `node scripts/rot-check.mjs` for the skill-rot audit: every cited statistic in new-lens carries a `reverify-by` date; the script fails when a source goes stale, when a `[S#]` cite dangles, or when a cited URL dies.
+
+<details>
+<summary><strong>Provenance and safety</strong></summary>
+
+Wisdom Lens is an author-created operational synthesis presented through the named framework **The New Lens**. Earlier public repository metadata described the work as distilled from ancient wisdom texts, but this package does not include source passages or citation mappings sufficient to verify each principle against an original source.
+
+Treat the skills as authorial interpretation and practical guidance—not original source text, a canonical translation, a religious ruling, or professional legal, medical, financial, or safety advice. For consequential decisions, verify claims against primary sources and consult a qualified human where appropriate. The package contains repository-authored skill material only; it does not bundle user profiles, session logs, or private agent memory.
+</details>
