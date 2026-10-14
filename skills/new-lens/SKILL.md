@@ -172,18 +172,16 @@ The frame is wrong — the question is not "what can the machine replace" but "w
 ### Chapter 16: The Builder's Protocol — The Daily Operating System
 Twelve rules that survive contact with a Monday morning.
 
-1. **Verify Before Acting** — Check one citation and one completion claim per session.
-2. **Specify with Measure** — Write quantities: scope, budget, tolerance, stop conditions.
-3. **Write It Down, Degrade Gracefully** — Externalize state at every handoff; maintain the degradation ladder.
-4. **Never Trade the Standing Instruction for the Salient Reward** — Pin the freeze beside the reward surface.
-5. **Ship; Output Is the Argument** — End every session with an inspectable artifact.
-6. **Mark Uncertainty in Advance** — Attach caps, exits, explicit uncertainty to every plan.
-7. **Ask People Who Already Know** — Consult before building. The existing answer beats the generated one.
-8. **Judge by What Remains, Not by Foam** — Evaluate at six-month distance, not at the demo.
-9. **Log at the Smallest Unit** — Nothing consequential goes unlogged.
-10. **Calibrated Trust After Full Diligence** — Do the diligence, set the caps, then let it run.
-11. **Review in Pairs or Alone, Then Reflect** — High-stakes verification in pairs or solo, protected hour.
-12. **No Favor-Debt** — Give without invoice; accept no flattery as debt.
+The full text of the twelve rules lives in one place — the **builder-protocol** skill
+(`../builder-protocol/SKILL.md`, "The Twelve Rules"). This chapter states the
+operating-system intent; for the enforceable wording of each rule, read builder-protocol.
+
+Rule index: 1 Verify Before Acting · 2 Specify with Measure · 3 Write It Down,
+Degrade Gracefully · 4 Never Trade the Standing Instruction for the Salient Reward ·
+5 Ship; Output Is the Argument · 6 Mark Uncertainty in Advance · 7 Ask People Who
+Already Know · 8 Judge by What Remains, Not by Foam · 9 Log at the Smallest Unit ·
+10 Calibrated Trust After Full Diligence · 11 Review in Pairs or Alone, Then Reflect ·
+12 No Favor-Debt
 
 ## The One-Page AI-Age Operating System
 

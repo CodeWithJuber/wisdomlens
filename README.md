@@ -1,5 +1,9 @@
 # Wisdom Lens
 
+[![Validate](https://github.com/CodeWithJuber/wisdomlens/actions/workflows/validate.yml/badge.svg)](https://github.com/CodeWithJuber/wisdomlens/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/github/license/CodeWithJuber/wisdomlens)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/CodeWithJuber/wisdomlens)](https://github.com/CodeWithJuber/wisdomlens/stargazers)
+
 **Your agent writes code. Wisdom Lens makes it think before it ships.**
 
 Wisdom Lens provides an instruction-only core skill pack — an operating layer for your agent's judgment. Once installed, your agent starts checking its own work: it verifies claims before acting, specifies with numbers before building, ships artifacts instead of foam, and marks what it doesn't know.
