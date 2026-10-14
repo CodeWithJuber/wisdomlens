@@ -193,3 +193,5 @@ Relationship Failures: Discount flattery → Filter foam → Audit the box → P
 The Human's Answer: Kindle, don't grow → Do the work yourself → Assign meaning → Keep learning → Verify, specify, write, ship, log
 
 For detailed chapter content, field practices, and anchors, see the `references/` directory.
+
+See the [changelog](CHANGELOG.md) for version history, and the repo README's [update contract](../../README.md#update-contract) before changing this skill.
