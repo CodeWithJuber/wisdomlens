@@ -120,6 +120,7 @@ const checkScripts = [
   ["scripts/trigger-test.mjs", []],
   ["scripts/tripwire-check.mjs", ["--self-test"]],
   ["scripts/skill-eval.mjs", []],
+  ["scripts/token-audit.mjs", []],
 ];
 for (const [script, args] of checkScripts) {
   const result = spawnSync(execPath, [join(root, script), ...args], { encoding: "utf8" });

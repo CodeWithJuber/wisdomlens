@@ -21,6 +21,7 @@ jobs:
       - run: node scripts/tripwire-check.mjs --self-test
       - run: node scripts/skill-eval.mjs
       - run: node scripts/rot-check.mjs
+      - run: node scripts/token-audit.mjs
       - run: node --test tests/jev-adapter.test.mjs
       - run: node --test tests/tripwire-check.test.mjs
       - run: node --test tests/tripwire-hook.test.mjs

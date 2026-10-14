@@ -95,6 +95,8 @@ For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the ex
 
 Multiple skills can fire on the same prompt. See [skill-routing](skills/decision-engine/references/skill-routing.md) for the conflict matrix, precedence rules, and the "minimum useful skills" selection rule.
 
+**Installed cost** (run `node scripts/token-audit.mjs` for current numbers): builder-protocol ~5,600 tokens · decision-engine ~11,500 tokens · new-lens ~8,600 tokens — roughly 25,700 tokens total if all three load. Estimates at 4 chars/token; the audit script CI-gates per-skill budgets so the cost can't drift silently.
+
 ## Agent
 
 | Agent              | Purpose                                                                          |
@@ -140,6 +142,19 @@ Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline 
 Run `node scripts/skill-eval.mjs` for the scenario-eval harness: 51 scripted scenarios measuring whether prompts route to the skill their spec claims and whether scripted transcripts conform to each skill's checkable rules (current baseline: 51/51). Deterministic, no LLM calls — a live-agent behavior Δ needs an instrumented LLM loop and is out of scope.
 
 Run `node scripts/rot-check.mjs` for the skill-rot audit: every cited statistic in new-lens carries a `reverify-by` date; the script fails when a source goes stale, when a `[S#]` cite dangles, or when a cited URL dies.
+
+Run `node scripts/token-audit.mjs` for the installed-cost audit: per-skill token budgets are CI-gated; the script fails if any skill exceeds its budget.
+
+## Update contract
+
+Every skill carries its own `CHANGELOG.md` and a `version` in SKILL.md frontmatter. When you change a skill, follow the contract:
+
+1. **Bump the version** — patch for fixes and clarifications, minor for new sections or practices, major for removed or renamed rules (consumers may reference rule numbers).
+2. **Add a CHANGELOG entry** — one bullet per change under a new version heading with today's date. No entry, no merge.
+3. **Update `last_verified`** — set it to today's date. The rot-check script treats a stale date as drift.
+4. **Run the audits** — `node scripts/validate.mjs` must exit 0, including the token-audit budget check if you added content.
+
+The contract exists because skills are dependencies. A silent change to Rule 1's practice breaks every team that bound it (see [adopting-this-skill](skills/builder-protocol/references/adopting-this-skill.md)). Version numbers are how downstream users know something changed.
 
 <details>
 <summary><strong>Provenance and safety</strong></summary>

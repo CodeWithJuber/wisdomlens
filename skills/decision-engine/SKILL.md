@@ -185,3 +185,5 @@ Rule 1.
 - The past is data, the future is unwritten — pay taxes to neither
 - Hold the mission, turn the heading
 - The lever you control is the only lever that moves the system
+
+See the [changelog](CHANGELOG.md) for version history. Before changing this skill, read the repo README's "Update contract" section.
