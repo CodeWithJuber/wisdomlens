@@ -163,4 +163,4 @@ When the squeeze comes:
 
 - [Pressure tests](references/pressure-tests.md) — five adversarial scenarios with worked correct behavior. Run one per week as a self-check.
 - [Adopting this skill](references/adopting-this-skill.md) — keep/bind/rewrite/drop decision table for teams, plus `assumes:` frontmatter guidance.
-- [Changelog](CHANGELOG.md) — version history. See the repo README's [update contract](../../README.md#update-contract) before changing this skill.
+- [Changelog](CHANGELOG.md) — version history. Before changing this skill, read the repo README's "Update contract" section.

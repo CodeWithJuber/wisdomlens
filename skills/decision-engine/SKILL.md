@@ -186,4 +186,4 @@ Rule 1.
 - Hold the mission, turn the heading
 - The lever you control is the only lever that moves the system
 
-See the [changelog](CHANGELOG.md) for version history, and the repo README's [update contract](../../README.md#update-contract) before changing this skill.
+See the [changelog](CHANGELOG.md) for version history. Before changing this skill, read the repo README's "Update contract" section.
