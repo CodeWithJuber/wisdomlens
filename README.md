@@ -19,12 +19,12 @@ Most agent failures aren't capability failures. They're judgment failures. Wisdo
 | A "done" that was never verified | **Verify Before Acting** (Builder's Protocol, Rule 1): every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on |
 | Plans that are wishes, not plans | **Specify with Measure** (Rule 2): "Make it better" is not a spec; "under 200 lines, zero new dependencies, ships Friday" is — reject any plan without a number in it |
 | Doom loops: fail → apologize → fail again | **The Loop** (The New Lens, Ch. 1): a repetition tripwire — the same action three times means locked; halt, reset, restart clean |
-| Slop that dies in a day | **The Foam Check** (Stop hook): "Would this response still be useful in six months, or is it foam?" — if it's foam, revise before delivering |
-| Guesses delivered as facts | **Mark Uncertainty** (Stop hook): every response labels what's known vs. inferred vs. guessed |
+| Slop that dies in a day | **The Foam Check** (session-start checklist): "Would this response still be useful in six months, or is it foam?" — if it's foam, revise before delivering |
+| Guesses delivered as facts | **Mark Uncertainty** (session-start checklist): every response labels what's known vs. inferred vs. guessed; the Stop hook blocks a citation or statistic stated as certain with no source |
 | Irreversible bets made blind | **The Probe Protocol** (Decision Engine): before irreversible commitments, run one low-cost, reversible test |
 | A single option sold as "the decision" | **Force three options** (Decision Engine): force three genuinely different options onto one page — including the option you dislike |
 
-Two automatic quality-control hooks run at the end of every response, and a repetition tripwire runs before every tool call, so these aren't suggestions your agent reads once — they're checks it passes every time.
+A session-start hook loads the checklist into every session, a Stop hook blocks an unproven "done" or an unsourced citation before it reaches you, and a repetition tripwire runs before every tool call.
 
 ## Try it in 30 seconds (Claude Code)
 
@@ -68,9 +68,9 @@ The same `skills/` directory is packaged without duplicated skill content:
 - **Claude Code:** install this repository as a plugin using `.claude-plugin/plugin.json` (existing support is unchanged).
 - **Codex:** install the repository as a plugin; `.codex-plugin/plugin.json` points Codex at `skills/`.
 - **Kimi Code CLI:** run `/plugins install https://github.com/CodeWithJuber/wisdomlens`, then `/reload`. Kimi reads `kimi.plugin.json`.
-- **OpenClaw:** review the bundle, then run `openclaw plugins install https://github.com/CodeWithJuber/wisdomlens --accept-capabilities`. OpenClaw maps the Codex bundle's skill root; the existing Claude prompt hooks are detected but not executed by OpenClaw.
+- **OpenClaw:** review the bundle, then run `openclaw plugins install https://github.com/CodeWithJuber/wisdomlens --accept-capabilities`. OpenClaw maps the Codex bundle's skill root; the Claude hooks are detected but not executed by OpenClaw.
 
-Start a new session after installation. The core skills and prompt hooks require no credentials or network access. The optional JEV scripts are invoked separately and require a TypeSafe API key for live calls. Host permissions and approval policies still apply.
+Start a new session after installation. The core skills and hooks require no credentials or network access. The optional JEV scripts are invoked separately and require a TypeSafe API key for live calls. Host permissions and approval policies still apply.
 
 ## Optional JEV adapter
 
@@ -107,9 +107,9 @@ Multiple skills can fire on the same prompt. See [skill-routing](skills/decision
 
 Three hooks keep the skills honest:
 
-1. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call (registered in `hooks/hooks.json`). Three consecutive identical tool calls (same tool + same normalized arguments) are blocked with a `HALT-LOOP` message; state is kept per session under `.wisdom-lens/`. The hook fails open — a broken hook never bricks the agent.
-2. **Builder's Protocol Check** (Stop) — Verify, specify, foam-check, mark uncertainty, attribute
-3. **Wisdom Lens Tone Check** (Stop) — Straight speech, calibrated register, pressure awareness
+1. **Session context (SessionStart)** — `scripts/session-context.mjs` loads the skill triggers, the Builder's Protocol checklist (verify, specify, foam-check, mark uncertainty, attribute), and the tone check (straight speech, calibrated register, pressure awareness) at session start and again after `/clear` or compaction.
+2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call (registered in `hooks/hooks.json`). Three consecutive identical tool calls (same tool + same normalized arguments) are blocked with a `HALT-LOOP` message; state is kept per session under `.wisdom-lens/`. The hook fails open — a broken hook never bricks the agent.
+3. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard.
 
 ## Like what you see?
 

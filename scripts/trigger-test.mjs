@@ -3,8 +3,8 @@
  * trigger-test.mjs — proves the SessionStart trigger hooks point at real
  * skill content.
  *
- * The SessionStart hooks in hooks/hooks.json name three skills and give one
- * trigger line each. This test feeds ~20 sample user prompts and asserts that
+ * The SessionStart hook (scripts/session-context.mjs) names three skills and
+ * gives one trigger line each. This test feeds ~20 sample user prompts and asserts that
  * each skill's own frontmatter description contains at least one trigger
  * token matching the prompt. If a skill's description drifts away from the
  * trigger language (or the hook names a skill whose description no longer
@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-// The three skills that carry SessionStart trigger hooks (wisdom-playbook
+// The three skills that carry a SessionStart trigger (wisdom-playbook
 // is being removed from the plugin, so it carries no trigger).
 const SKILLS = ["builder-protocol", "decision-engine", "new-lens"];
 

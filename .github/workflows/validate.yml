@@ -25,3 +25,4 @@ jobs:
       - run: node --test tests/jev-adapter.test.mjs
       - run: node --test tests/tripwire-check.test.mjs
       - run: node --test tests/tripwire-hook.test.mjs
+      - run: node --test tests/hooks-config.test.mjs

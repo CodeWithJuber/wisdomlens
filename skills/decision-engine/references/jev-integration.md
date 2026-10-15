@@ -1,7 +1,7 @@
 # Optional JEV integration
 
 The adapter adds typed model judgments to the six-stage framework. It runs only
-when called. Installation and the existing prompt hooks make no JEV requests.
+when called. Installation and the existing hooks make no JEV requests.
 Use Node.js 20 or newer; no npm packages are required.
 
 ## Inspect and run
