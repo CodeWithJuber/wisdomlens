@@ -18,6 +18,9 @@
  *  2. No skill exceeds its token budget (see BUDGETS). Over = FAIL.
  *     Budgets are generous ceilings, not targets — a skill at 95% of
  *     budget is a smell even if it passes.
+ *  3. The README's "Context cost" figures (each SKILL.md, and the on-disk
+ *     total) match what this script measures, to the nearest 0.1k tokens.
+ *     Drift = FAIL, with the figure to write.
  *
  * Exit 0 when all checks pass, non-zero with details otherwise.
  * `--json` prints a machine-readable summary.
@@ -75,6 +78,7 @@ for (const name of skillNames) {
   }
   const bytes = bytesUnder(dir);
   const tokens = Math.ceil(bytes / CHARS_PER_TOKEN);
+  const skillMdTokens = Math.ceil(statSync(skillFile).size / CHARS_PER_TOKEN);
   const budget = BUDGETS[name];
   if (budget === undefined) {
     fail(`skills/${name}: no token budget defined in BUDGETS — add one deliberately`);
@@ -86,7 +90,21 @@ for (const name of skillNames) {
       `skills/${name}: ~${tokens.toLocaleString()} tokens exceeds budget of ${budget.toLocaleString()}`,
     );
   }
-  rows.push({ name, bytes, tokens, budget, status });
+  rows.push({ name, bytes, tokens, skillMdTokens, budget, status });
+}
+
+// The README quotes these numbers; keep it honest (e.g. "new-lens ~4.3k", "on-disk total (~27.4k tokens)").
+const kTokens = (tokens) => `${(tokens / 1000).toFixed(1)}k`;
+const readme = readFileSync(join(root, "README.md"), "utf8");
+const readmeFigures = [
+  ...rows.map((r) => [`${r.name} SKILL.md`, new RegExp(`${r.name} ~(\\d+(?:\\.\\d)?k)`), kTokens(r.skillMdTokens)]),
+  ["on-disk total", /on-disk total \(~(\d+(?:\.\d)?k) tokens\)/, kTokens(rows.reduce((s, r) => s + r.tokens, 0))],
+];
+for (const [label, pattern, measured] of readmeFigures) {
+  const stated = readme.match(pattern)?.[1];
+  if (stated !== measured) {
+    fail(`README.md: ${label} is stated as ${stated ? `~${stated}` : "(not found)"}, measured ~${measured} tokens — update the "Context cost" line`);
+  }
 }
 
 const asJson = process.argv.includes("--json");

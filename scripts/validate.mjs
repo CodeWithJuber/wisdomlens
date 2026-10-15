@@ -79,6 +79,20 @@ for (const path of skillFiles) {
       fail(`${label}: missing or unsafe relative reference '${reference}'`);
     }
   }
+
+  // Update contract: the skill's version is the newest entry in its CHANGELOG.md.
+  const skillVersion = frontmatter.match(/^\s+version:\s*["']?([^"'\s]+)["']?\s*$/m)?.[1] ?? "";
+  const skillChangelogPath = join(dirname(path), "CHANGELOG.md");
+  const newest = existsSync(skillChangelogPath)
+    ? readFileSync(skillChangelogPath, "utf8").match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1]
+    : undefined;
+  if (!/^\d+\.\d+\.\d+$/.test(skillVersion)) {
+    fail(`${label}: metadata.version "${skillVersion}" is not semver`);
+  } else if (newest !== skillVersion) {
+    fail(
+      `${label}: metadata.version ${skillVersion} must match the newest "## [x.y.z]" entry in ${relative(root, skillChangelogPath)} (found ${newest ?? "none"})`,
+    );
+  }
 }
 
 const manifests = [

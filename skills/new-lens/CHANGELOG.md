@@ -17,6 +17,8 @@
 
 Initial public release of the skill as a standalone pack.
 
+Not everything below shipped on that date: the Chapter 16 cross-reference cleanup landed on 2026-10-14 (commit 11beace) without a version bump.
+
 ### Added
 - 16 chapters mapping AI-age failure modes across four parts: machine failures (doom loops, blind judgment, sycophancy, slop, black-box, memory), workflow failures, relationship failures, and the human's answer.
 - The One-Page AI-Age Operating System (distilled reference).

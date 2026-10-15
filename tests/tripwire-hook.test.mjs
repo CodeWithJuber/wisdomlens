@@ -1,11 +1,21 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, symlinkSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  utimesSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import test from "node:test";
-import { sanitizeSessionId } from "../scripts/tripwire-check.mjs";
+import test, { after } from "node:test";
+import { HOOK_MAX_AGE_DAYS, pruneStaleLogs, sanitizeSessionId } from "../scripts/tripwire-check.mjs";
 
 const cli = fileURLToPath(new URL("../scripts/tripwire-check.mjs", import.meta.url));
 
@@ -32,8 +42,15 @@ function payload(sessionId, tool, args) {
   };
 }
 
+const tempDirs = [];
+after(() => {
+  for (const dir of tempDirs) rmSync(dir, { recursive: true, force: true });
+});
+
 function freshProject() {
-  return mkdtempSync(join(tmpdir(), "tripwire-hook-"));
+  const dir = mkdtempSync(join(tmpdir(), "tripwire-hook-"));
+  tempDirs.push(dir);
+  return dir;
 }
 
 test("three consecutive identical hook calls block on the third", () => {
@@ -174,4 +191,50 @@ test("the temp fallback refuses a symlinked state dir and fails open", posixOnly
     assert.ok(result.stderr.includes("allowing"), result.stderr);
   }
   assert.deepEqual(readdirSync(elsewhere), []);
+});
+
+test("parallel hook calls never drop each other's records", async () => {
+  const dir = freshProject();
+  const runs = Array.from({ length: 20 }, (_, i) =>
+    new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [cli, "--hook"], {
+        env: { ...process.env, CLAUDE_PLUGIN_DATA: dir, WISDOM_LENS_TRIPWIRE: "", CLAUDE_PLUGIN_OPTION_TRIPWIRE: "" },
+        stdio: ["pipe", "ignore", "ignore"],
+      });
+      child.on("error", reject);
+      child.on("exit", resolve);
+      child.stdin.end(JSON.stringify(payload("race", "Read", { file_path: `f${i}.js` })));
+    }),
+  );
+  assert.deepEqual(await Promise.all(runs), Array(20).fill(0));
+  const lines = readFileSync(join(dir, "tripwire", "race.log"), "utf8").trim().split("\n");
+  assert.equal(lines.length, 20);
+});
+
+test("a subagent's calls are counted apart from its parent session", () => {
+  const dir = freshProject();
+  const parent = payload("sess-l", "grep", { pattern: "x" });
+  const sub = { ...payload("sess-l", "grep", { pattern: "x" }), agent_id: "agent-1" };
+  assert.equal(hookRun(dir, parent).status, 0);
+  assert.equal(hookRun(dir, sub).status, 0, "the subagent's first call is its own first call");
+  assert.equal(hookRun(dir, { ...sub, tool_name: "Read" }).status, 0);
+  assert.equal(hookRun(dir, parent).status, 0);
+  const third = hookRun(dir, parent);
+  assert.equal(third.status, 2, "subagent calls neither reset nor extend the parent's run");
+  assert.deepEqual(readdirSync(join(dir, "tripwire")).sort(), ["sess-l--agent-1.log", "sess-l.log"]);
+});
+
+test("a new session deletes tripwire logs untouched for longer than the max age", () => {
+  const dir = freshProject();
+  const stateDir = join(dir, "tripwire");
+  mkdirSync(stateDir);
+  const old = (Date.now() - (HOOK_MAX_AGE_DAYS + 1) * 86_400_000) / 1000;
+  for (const name of ["old.log", "old.log.123.tmp", "keep.txt"]) {
+    writeFileSync(join(stateDir, name), "x\n");
+    utimesSync(join(stateDir, name), old, old);
+  }
+  writeFileSync(join(stateDir, "recent.log"), "x\n");
+  assert.equal(hookRun(dir, payload("sess-m", "grep", {})).status, 0);
+  assert.deepEqual(readdirSync(stateDir).sort(), ["keep.txt", "recent.log", "sess-m.log"]);
+  assert.deepEqual(pruneStaleLogs(stateDir), [], "nothing else is stale");
 });

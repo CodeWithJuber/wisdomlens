@@ -19,16 +19,30 @@
  * Hook mode (`--hook`) consumes a single Claude Code PreToolUse payload from
  * stdin and blocks (exit 2) only while the newest calls are a run of >= 3
  * identical calls; a different call ends the run. It stores a one-way hash
- * per call (never the raw tool input) in a per-session log under the plugin
- * data dir (CLAUDE_PLUGIN_DATA, else a per-user temp dir), never in the
- * user's project. Set WISDOM_LENS_TRIPWIRE=off to turn it off. Registered in
+ * per call (never the raw tool input) in a per-session log (per subagent when
+ * the payload carries an agent_id) under the plugin data dir
+ * (CLAUDE_PLUGIN_DATA, else a per-user temp dir), never in the user's
+ * project. Logs untouched for HOOK_MAX_AGE_DAYS are deleted when a new log
+ * starts. Set WISDOM_LENS_TRIPWIRE=off to turn it off. Registered in
  * hooks/hooks.json so the tripwire actually runs before every tool call.
  *
  * Dependency-free (node stdlib only). Importing this module performs no I/O.
  */
 
 import { createHash } from "node:crypto";
-import { appendFileSync, lstatSync, mkdirSync, readFileSync, realpathSync, renameSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  realpathSync,
+  renameSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -104,6 +118,8 @@ export const HOOK_STATE_DIRNAME = "tripwire";
 /** A session log is compacted past HOOK_MAX_LINES; only the trailing run matters. */
 export const HOOK_MAX_LINES = 200;
 export const HOOK_KEEP_LINES = 20;
+/** Session logs untouched this long are deleted when a new log starts. */
+export const HOOK_MAX_AGE_DAYS = 7;
 const OFF_VALUES = /^(0|false|off|no)$/i;
 
 /** Keep session ids filename-safe (no path traversal); fall back to "default". */
@@ -125,8 +141,37 @@ export function hookStateDir(env = process.env) {
   return join(base, HOOK_STATE_DIRNAME);
 }
 
-export function hookStateFile(sessionId, env = process.env) {
-  return join(hookStateDir(env), `${sanitizeSessionId(sessionId)}.log`);
+/**
+ * One log per session, and one per subagent when the payload carries an
+ * agent_id, so a subagent's calls never break or extend the parent's run.
+ */
+export function hookStateFile(sessionId, env = process.env, agentId = undefined) {
+  const stream = agentId ? `${sanitizeSessionId(sessionId)}--${sanitizeSessionId(agentId)}` : sanitizeSessionId(sessionId);
+  return join(hookStateDir(env), `${stream}.log`);
+}
+
+/**
+ * Deletes session logs (and leftover compaction temp files) in `dir` that
+ * were last written more than `maxAgeDays` ago. Best effort: a file another
+ * hook already removed, or one we cannot stat, is skipped. Returns the names
+ * it removed.
+ */
+export function pruneStaleLogs(dir, maxAgeDays = HOOK_MAX_AGE_DAYS, now = Date.now()) {
+  const cutoff = now - maxAgeDays * 24 * 60 * 60 * 1000;
+  const removed = [];
+  for (const name of readdirSync(dir)) {
+    if (!/^[A-Za-z0-9_-]+\.log(\.\d+\.tmp)?$/.test(name)) continue;
+    try {
+      const file = join(dir, name);
+      if (statSync(file).mtimeMs < cutoff) {
+        unlinkSync(file);
+        removed.push(name);
+      }
+    } catch {
+      // Raced with another hook or unreadable: leave it.
+    }
+  }
+  return removed;
 }
 
 /**
@@ -193,7 +238,9 @@ export function hookMode() {
       assertOwnDir(base);
     }
     mkdirSync(dir, { recursive: true, mode: 0o700 });
-    const file = hookStateFile(payload.session_id);
+    const file = hookStateFile(payload.session_id, process.env, payload.agent_id);
+    // A new log means a new session or subagent: a cheap moment to drop old ones.
+    if (!existsSync(file)) pruneStaleLogs(dir);
     const key = hookKey(tool, payload.tool_input ?? null);
     // O_APPEND: parallel tool calls never overwrite each other's records.
     appendFileSync(file, `${key}\n`, { mode: 0o600 });

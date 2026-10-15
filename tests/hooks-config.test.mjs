@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -69,4 +70,17 @@ test("session-context prints nothing when turned off", () => {
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.stdout, "", JSON.stringify(env));
   }
+});
+
+test("session-context still prints when the plugin path goes through a symlink", { skip: process.platform === "win32" }, (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "hooks-config-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const link = join(dir, "plugin");
+  symlinkSync(root, link, "dir");
+  const result = spawnSync(process.execPath, [join(link, "scripts", "session-context.mjs")], {
+    encoding: "utf8",
+    env: { ...process.env, WISDOM_LENS_CONTEXT: "", CLAUDE_PLUGIN_OPTION_SESSION_CONTEXT: "" },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(result.stdout.includes("Wisdom Lens skills are installed."), "no context printed via the symlink");
 });
