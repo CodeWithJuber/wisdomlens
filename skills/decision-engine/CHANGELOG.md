@@ -1,5 +1,11 @@
 # Changelog — decision-engine
 
+## [1.1.1] — 2026-10-15
+
+### Fixed
+- The JEV adapter command now gives a runnable invocation: `node "${CLAUDE_SKILL_DIR}/scripts/jev-decide.mjs" --input <file> --dry-run` in Claude Code, with paths relative to the skill's directory on other hosts. The old bare `scripts/jev-decide.mjs` path resolves against the user's working directory, not the skill's.
+- `references/skill-routing.md` and `references/frameworks.md` were not linked from SKILL.md; a new References section now points to both.
+
 ## [1.1.0] — 2026-10-12
 
 ### Added

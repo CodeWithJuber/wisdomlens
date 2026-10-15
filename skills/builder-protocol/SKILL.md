@@ -10,8 +10,8 @@ description: >
   (route to decision-engine).
 license: MIT
 metadata:
-  version: "1.0.0"
-  last_verified: "2026-10-12"
+  version: "1.0.1"
+  last_verified: "2026-10-15"
 ---
 
 ## When NOT to Use
@@ -23,7 +23,7 @@ metadata:
 
 # The Builder's Protocol — Daily Operating System
 
-Twelve rules for builders. Each one has survived contact with real-world failures.
+Twelve rules for builders. Each one targets a recurring agent failure pattern.
 
 ## The Twelve Rules
 

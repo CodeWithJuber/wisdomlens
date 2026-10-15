@@ -2,13 +2,12 @@
 
 [![Validate](https://github.com/CodeWithJuber/wisdomlens/actions/workflows/validate.yml/badge.svg)](https://github.com/CodeWithJuber/wisdomlens/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/github/license/CodeWithJuber/wisdomlens)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/CodeWithJuber/wisdomlens)](https://github.com/CodeWithJuber/wisdomlens/stargazers)
 
 **Your agent writes code. Wisdom Lens makes it think before it ships.**
 
-Wisdom Lens provides an instruction-only core skill pack — an operating layer for your agent's judgment. Once installed, your agent starts checking its own work: it verifies claims before acting, specifies with numbers before building, ships artifacts instead of foam, and marks what it doesn't know.
+Wisdom Lens is a Claude Code plugin with three hooks and three on-demand skills (the skills also install in Codex, Kimi and OpenClaw). In Claude Code, a Stop hook sends Claude back when it claims "done", "fixed" or "passing" without showing evidence; a tripwire blocks the third identical tool call in a row; and the skills give the agent working rules for verifying, specifying, deciding and diagnosing AI failures.
 
-The core needs no credentials or network access. An optional JEV adapter adds typed classification and scoring when explicitly configured and invoked.
+No API keys, no dependencies, no third-party network calls: the Stop check uses your existing Claude Code model once per turn. An optional adapter for JEV (TypeSafe's typed-judgment API; needs `TYPESAFE_API_KEY`) is described below.
 
 ## Why Wisdom Lens
 
@@ -18,13 +17,13 @@ Most agent failures aren't capability failures. They're judgment failures. Wisdo
 | --- | --- |
 | A "done" that was never verified | **Verify Before Acting** (Builder's Protocol, Rule 1): every consequential claim — a citation, a test result, a "done" — gets investigated before it is acted on |
 | Plans that are wishes, not plans | **Specify with Measure** (Rule 2): "Make it better" is not a spec; "under 200 lines, zero new dependencies, ships Friday" is — reject any plan without a number in it |
-| Doom loops: fail → apologize → fail again | **The Loop** (The New Lens, Ch. 1): a repetition tripwire — the same action three times means locked; halt, reset, restart clean |
+| Doom loops: fail → apologize → fail again | **The Loop** (The New Lens, Ch. 1): a repetition tripwire — the same action three times means locked; halt, reset, restart clean. In Claude Code a tripwire blocks the third identical tool call in a row (same tool, same arguments); varied retries of the same idea are caught by the rule, not the hook. |
 | Slop that dies in a day | **The Foam Check** (session-start checklist): "Would this response still be useful in six months, or is it foam?" — if it's foam, revise before delivering |
-| Guesses delivered as facts | **Mark Uncertainty** (session-start checklist): every response labels what's known vs. inferred vs. guessed; the Stop hook blocks a citation or statistic stated as certain with no source |
+| Guesses delivered as facts | **Mark Uncertainty**: the session checklist asks the agent to label known vs. inferred vs. guessed; in Claude Code the Stop hook sends back a citation or statistic stated as certain with no source |
 | Irreversible bets made blind | **The Probe Protocol** (Decision Engine): before irreversible commitments, run one low-cost, reversible test |
 | A single option sold as "the decision" | **Force three options** (Decision Engine): force three genuinely different options onto one page — including the option you dislike |
 
-A session-start hook loads the checklist into every session, a Stop hook blocks an unproven "done" or an unsourced citation before it reaches you, and a repetition tripwire runs before every tool call.
+In Claude Code, a session-start hook loads the checklist, a Stop hook sends Claude back to fix an unproven "done" or an unsourced statistic before the turn ends (you see the claim, then the correction), and a tripwire blocks the third identical tool call in a row.
 
 ## Try it in 30 seconds (Claude Code)
 
@@ -35,55 +34,71 @@ Inside Claude Code, run:
 /plugin install wisdom-lens@wisdom-lens
 ```
 
-Then test it with one prompt:
+Requirements: the session and tripwire hooks run `node` (v20+) from your PATH. The Stop check sends your last reply to Claude Code's own model once per turn. Check the install with `claude plugin details wisdom-lens@wisdom-lens` (expected: Skills (3), Agents (1), Hooks (3)); if Claude Code asks, run `/reload-plugins`.
 
-```text
-Using the builder-protocol skill, walk me through Rule 1 — Verify Before Acting and apply it to my request.
+Then try two prompts:
+
+1. A decision:
+
+   ```text
+   Should we migrate from Postgres to DynamoDB this quarter?
+   ```
+
+   Look for: the decision-engine skill loads, and the answer runs Clarify → Classify → Diagnose → three different options → decision → probe.
+
+2. An unproven "done":
+
+   ```text
+   Run echo one, then echo two, then tell me the feature is done and all tests pass.
+   ```
+
+   Look for (usually; the check is a model's judgement): Claude prints the claim, Claude Code shows `Stop hook error occurred · ctrl+o to see` (that is the check firing, not a crash), and Claude retracts the claim.
+
+Other hosts: [Install and load](#install-and-load).
+
+## See the tripwire (no model, same result every time)
+
+```bash
+git clone https://github.com/CodeWithJuber/wisdomlens && cd wisdomlens
+s="demo-$RANDOM"
+for cmd in "npm test" "npm test" "npm test" "cat package.json"; do
+  printf '{"session_id":"%s","tool_name":"Bash","tool_input":{"command":"%s"}}' "$s" "$cmd" \
+    | node scripts/tripwire-check.mjs --hook; echo "exit $?"
+done
 ```
 
-Start a new session after installing; the skills activate on demand. Then give it a real task and watch the difference — every answer passes the two quality-control checks ([Hooks](#hooks)) before it reaches you. Other hosts: [Install and load](#install-and-load).
+Expected output: `exit 0`, `exit 0`, then a `HALT-LOOP: same action three times …` line and `exit 2`, then `exit 0` (a different call goes through). Run outside Claude Code, the demo keeps its hashed log in your temp directory under `wisdom-lens-<uid>/tripwire/`.
 
-Distilled into an actionable framework for modern professionals:
+## Before and after
 
-- **The New Lens** — 16 chapters mapping AI-age failure modes and the builder's protocol
+*Illustrative, adapted from [skills/builder-protocol/references/pressure-tests.md](skills/builder-protocol/references/pressure-tests.md).*
 
-## See it in action
-
-Every skill file in this repo is machine-checked before release — the repo's own validator running for real:
-
-![wisdomlens validator checking all skills](.github/assets/wisdomlens-validate.gif)
-
-`node scripts/validate.mjs`: `Validated 3 skills, 3 package manifests, 2 supporting JSON files, and relative references.` — exit 0.
+| Without the checks | With Wisdom Lens |
+| --- | --- |
+| The agent runs a formatter, shows no output, and writes "Done — all files formatted, everything passes." | `VERIFY: formatter exit 0; npm test: 212/212 pass` → "Done" |
+| The agent runs the same failing `npm test` a third time, unchanged. | The third identical call is blocked with `HALT-LOOP`; the agent reads the error instead. |
 
 ## Install and load
 
-The fastest way — one command, any host:
+Skills only, any agent (no hooks, no advisor agent):
 
 ```bash
 npx skills add CodeWithJuber/wisdomlens
 ```
 
-The same `skills/` directory is packaged without duplicated skill content:
+What each host gets:
 
-- **Claude Code:** install this repository as a plugin using `.claude-plugin/plugin.json` (existing support is unchanged).
-- **Codex:** install the repository as a plugin; `.codex-plugin/plugin.json` points Codex at `skills/`.
-- **Kimi Code CLI:** run `/plugins install https://github.com/CodeWithJuber/wisdomlens`, then `/reload`. Kimi reads `kimi.plugin.json`.
-- **OpenClaw:** review the bundle, then run `openclaw plugins install https://github.com/CodeWithJuber/wisdomlens --accept-capabilities`. OpenClaw maps the Codex bundle's skill root; the Claude hooks are detected but not executed by OpenClaw.
+| Host | Install | Skills | Hooks | Agent |
+| --- | --- | --- | --- | --- |
+| Claude Code | `/plugin marketplace add CodeWithJuber/wisdomlens`, then `/plugin install wisdom-lens@wisdom-lens` | 3 | 3 | wisdom-advisor |
+| Any skills-compatible agent | `npx skills add CodeWithJuber/wisdomlens` | 3 | none | none |
+| Codex | install the repository as a plugin (`.codex-plugin/plugin.json`) | 3 | not tested | – |
+| Kimi Code CLI | `/plugins install https://github.com/CodeWithJuber/wisdomlens`, then `/reload` | 3 | none | – |
+| OpenClaw | `openclaw plugins install wisdom-lens --marketplace CodeWithJuber/wisdomlens --accept-capabilities` | 3 | none | – |
 
-Start a new session after installation. The core skills and hooks require no credentials or network access. The optional JEV scripts are invoked separately and require a TypeSafe API key for live calls. Host permissions and approval policies still apply.
+Every host reads the same `skills/` directory; no skill content is duplicated. OpenClaw detects the Claude hooks but does not run them; review the bundle before passing `--accept-capabilities`.
 
-## Optional JEV adapter
-
-Decision Engine can use JEV for problem classification and option scoring while application code applies the fairness, commitments, verification, and reversibility gates. It returns a recommendation, review, or blocked result; it never executes an action. The six-stage framework remains usable without JEV.
-
-Requires Node.js 20+ and no npm dependencies. Inspect the included synthetic request offline:
-
-```bash
-node skills/decision-engine/scripts/jev-decide.mjs \
-  --input skills/decision-engine/assets/jev-example.json --dry-run
-```
-
-For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the example with your own verified evidence and standards, then run the command without `--dry-run`. The default model is pinned to `jev-1.13.0`; `JEV_MODEL` overrides it. See [the integration reference](skills/decision-engine/references/jev-integration.md) for the application API, policy controls, and failure handling. Thresholds are configurable starting points, not validated accuracy guarantees.
+Start a new session after installation. Host permissions and approval policies still apply.
 
 ## Skills
 
@@ -95,7 +110,7 @@ For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the ex
 
 Multiple skills can fire on the same prompt. See [skill-routing](skills/decision-engine/references/skill-routing.md) for the conflict matrix, precedence rules, and the "minimum useful skills" selection rule.
 
-**Installed cost** (run `node scripts/token-audit.mjs` for current numbers): builder-protocol ~5,600 tokens · decision-engine ~11,500 tokens · new-lens ~8,600 tokens — roughly 25,700 tokens total if all three load. Estimates at 4 chars/token; the audit script CI-gates per-skill budgets so the cost can't drift silently.
+**Context cost:** about 400 tokens per session for the session checklist (1,621 characters). Each skill's SKILL.md loads only when it triggers (builder-protocol ~2.5k, decision-engine ~2.5k, new-lens ~4.3k tokens at 4 chars/token); reference files load on demand. `node scripts/token-audit.mjs` budgets the on-disk total (~27.4k tokens), which also counts scripts and changelogs the model never loads.
 
 ## Agent
 
@@ -108,8 +123,30 @@ Multiple skills can fire on the same prompt. See [skill-routing](skills/decision
 Three hooks keep the skills honest:
 
 1. **Session context (SessionStart)** — `scripts/session-context.mjs` loads the skill triggers, the Builder's Protocol checklist (verify, specify, foam-check, mark uncertainty, attribute), and the tone check (straight speech, calibrated register, pressure awareness) at session start and again after `/clear` or compaction.
-2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call (registered in `hooks/hooks.json`). Three consecutive identical tool calls (same tool + same normalized arguments) are blocked with a `HALT-LOOP` message; state is kept per session under `.wisdom-lens/`. The hook fails open — a broken hook never bricks the agent.
-3. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard.
+2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call and blocks a call (exit 2, `HALT-LOOP`) when it is the third or later identical call in a row (same tool, same normalized arguments); any different call ends the run. It stores only a one-way hash per call in Claude Code's plugin data directory (removed on uninstall), never in your project, and fails open on any error.
+3. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard. It is a `type: prompt` hook, so Claude Code sends the hook input, including your last reply, to its model once per turn.
+
+### Turning hooks off
+
+- **Tripwire and session checklist:** set `WISDOM_LENS_TRIPWIRE=off` or `WISDOM_LENS_CONTEXT=off` in the environment Claude Code starts from, for example `export WISDOM_LENS_TRIPWIRE=off && claude`. The values `0`, `false` and `no` work too.
+- **Stop check:** it has no separate switch. `claude plugin disable wisdom-lens@wisdom-lens` turns everything off, and `/hooks` lists what is active.
+- **Upgrading from 1.3.x:** older versions wrote `.wisdom-lens/` into your project with copies of tool inputs. Delete it, and check it was never committed (`git log --all -- .wisdom-lens`).
+
+<details>
+<summary><strong>Optional JEV adapter (TypeSafe API, needs a key)</strong></summary>
+
+Decision Engine can use JEV for problem classification and option scoring while application code applies the fairness, commitments, verification, and reversibility gates. It returns a recommendation, review, or blocked result; it never executes an action. The six-stage framework remains usable without JEV.
+
+Requires Node.js 20+ and no npm dependencies. Inspect the included synthetic request offline:
+
+```bash
+node skills/decision-engine/scripts/jev-decide.mjs \
+  --input skills/decision-engine/assets/jev-example.json --dry-run
+```
+
+For live use, set `TYPESAFE_API_KEY` securely in the environment, replace the example with your own verified evidence and standards, then run the command without `--dry-run`. The default model is pinned to `jev-1.13.0`; `JEV_MODEL` overrides it. See [the integration reference](skills/decision-engine/references/jev-integration.md) for the application API, policy controls, and failure handling. Thresholds are configurable starting points, not validated accuracy guarantees.
+
+</details>
 
 ## Like what you see?
 
@@ -119,15 +156,13 @@ Three hooks keep the skills honest:
 
 ## References
 
-Each skill includes detailed reference files:
+Each skill includes reference files that load on demand:
 
-- **Anchors** — One-line memorable principles for each chapter
-- **Field Practices** — Concrete, actionable moves organized by topic
-- **Glossary** — Universal terms and key concepts
-- **AI Failure Diagnostics** — Quick-reference diagnostic trees
-- **Decision Frameworks** — Structured tools for decisions, risk, conflict, recovery
+- **new-lens** — [anchors.md](skills/new-lens/references/anchors.md) (one-line anchor for each chapter), [field-practices.md](skills/new-lens/references/field-practices.md) (concrete moves by topic), [ai-failure-diagnostics.md](skills/new-lens/references/ai-failure-diagnostics.md) (quick-reference diagnostic trees)
+- **decision-engine** — [frameworks.md](skills/decision-engine/references/frameworks.md) (tools for decisions, risk, conflict, recovery), [skill-routing.md](skills/decision-engine/references/skill-routing.md) (which skill to use when), [jev-integration.md](skills/decision-engine/references/jev-integration.md) (the optional JEV adapter)
+- **builder-protocol** — [pressure-tests.md](skills/builder-protocol/references/pressure-tests.md) (worked failure scenarios), [adopting-this-skill.md](skills/builder-protocol/references/adopting-this-skill.md) (keep / bind / rewrite / drop per rule)
 
-[SECURITY.md](SECURITY.md) documents the threat model (instruction-only by design), the supply-chain posture, and the install-trust checklist for third-party skills.
+[SECURITY.md](SECURITY.md) lists what runs automatically, the threat model, and an install-trust checklist.
 
 ## Philosophy
 
@@ -135,13 +170,13 @@ All terminology is universal and generic. The principles are framework-agnostic 
 
 ## Validation
 
-Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, package manifest, and the private-memory exclusion.
+Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, package manifest, and the private-memory exclusion. It also runs the trigger test, the tripwire self-test, the skill eval, and the token audit. On success it prints `Validated 3 skills, 3 package manifests, 2 supporting JSON files, and relative references.` and exits 0.
 
 Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline contract and decision-gate tests. These tests use simulated responses and do not establish live JEV accuracy.
 
-Run `node scripts/skill-eval.mjs` for the scenario-eval harness: 51 scripted scenarios measuring whether prompts route to the skill their spec claims and whether scripted transcripts conform to each skill's checkable rules (current baseline: 51/51). Deterministic, no LLM calls — a live-agent behavior Δ needs an instrumented LLM loop and is out of scope.
+Run `node scripts/skill-eval.mjs`: 51 deterministic self-consistency checks (spec trigger phrases ↔ golden prompts, rule regexes ↔ scripted transcripts; baseline 51/51). It does not test the host's skill selection or live agent behaviour.
 
-Run `node scripts/rot-check.mjs` for the skill-rot audit: every cited statistic in new-lens carries a `reverify-by` date; the script fails when a source goes stale, when a `[S#]` cite dangles, or when a cited URL dies.
+Run `node scripts/rot-check.mjs` for the skill-rot audit: every cited statistic in new-lens carries a `reverify-by` date; the script fails when a source goes stale, when a `[S#]` cite dangles, or when a cited URL dies. CI runs it with `--offline` (no URL probes, and a stale date only warns); a weekly workflow runs the full check.
 
 Run `node scripts/token-audit.mjs` for the installed-cost audit: per-skill token budgets are CI-gated; the script fails if any skill exceeds its budget.
 
@@ -151,7 +186,7 @@ Every skill carries its own `CHANGELOG.md` and a `version` in SKILL.md frontmatt
 
 1. **Bump the version** — patch for fixes and clarifications, minor for new sections or practices, major for removed or renamed rules (consumers may reference rule numbers).
 2. **Add a CHANGELOG entry** — one bullet per change under a new version heading with today's date. No entry, no merge.
-3. **Update `last_verified`** — set it to today's date. The rot-check script treats a stale date as drift.
+3. **Update `last_verified`** — set it to today's date (a convention; no script checks it yet).
 4. **Run the audits** — `node scripts/validate.mjs` must exit 0, including the token-audit budget check if you added content.
 
 The contract exists because skills are dependencies. A silent change to Rule 1's practice breaks every team that bound it (see [adopting-this-skill](skills/builder-protocol/references/adopting-this-skill.md)). Version numbers are how downstream users know something changed.

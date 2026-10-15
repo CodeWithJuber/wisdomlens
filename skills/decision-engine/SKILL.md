@@ -12,8 +12,8 @@ description: >
   explicit authorization.
 license: MIT
 metadata:
-  version: "1.1.0"
-  last_verified: "2026-10-12"
+  version: "1.1.1"
+  last_verified: "2026-10-15"
 ---
 
 ## When NOT to Use
@@ -144,8 +144,9 @@ calling it. The ordinary six-stage framework works without an API key or network
 - Verify evidence with tools and generate the options before asking JEV to judge.
 - Supply explicit fairness and commitments standards, three distinct options,
   and deterministic check results from actual verification.
-- Run `scripts/jev-decide.mjs` with a JSON input, or import the functions from
-  `scripts/jev-adapter.mjs` in the surrounding application.
+- Run `node "${CLAUDE_SKILL_DIR}/scripts/jev-decide.mjs" --input <file> --dry-run`
+  (other hosts: paths are relative to this skill's directory), or import the
+  functions from `scripts/jev-adapter.mjs` in the surrounding application.
 - Start with `--dry-run` and the synthetic `assets/jev-example.json` to inspect
   the request without a network call. Store live credentials in `TYPESAFE_API_KEY`.
 - Treat `recommend` as advice for the selected option. Treat `review`, `blocked`,
@@ -185,5 +186,10 @@ Rule 1.
 - The past is data, the future is unwritten — pay taxes to neither
 - Hold the mission, turn the heading
 - The lever you control is the only lever that moves the system
+
+## References
+
+- Picking between overlapping skills: [references/skill-routing.md](references/skill-routing.md)
+- Risk, conflict and recovery tools: [references/frameworks.md](references/frameworks.md)
 
 See the [changelog](CHANGELOG.md) for version history. Before changing this skill, read the repo README's "Update contract" section.

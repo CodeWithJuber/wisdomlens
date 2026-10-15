@@ -47,7 +47,10 @@ test("every node script a hook runs exists", () => {
 });
 
 test("session-context prints every skill trigger and quality check", () => {
-  const result = spawnSync(process.execPath, [contextScript], { encoding: "utf8" });
+  const result = spawnSync(process.execPath, [contextScript], {
+    encoding: "utf8",
+    env: { ...process.env, WISDOM_LENS_CONTEXT: "", CLAUDE_PLUGIN_OPTION_SESSION_CONTEXT: "" },
+  });
   assert.equal(result.status, 0, result.stderr);
   for (const [skill] of TRIGGERS) assert.ok(result.stdout.includes(`${skill} skill`), skill);
   for (const check of CHECKS) assert.ok(result.stdout.includes(check), check);
@@ -58,4 +61,12 @@ test("session-context names the skills trigger-test covers", () => {
   const triggerTest = readFileSync(new URL("../scripts/trigger-test.mjs", import.meta.url), "utf8");
   const listed = JSON.parse(triggerTest.match(/const SKILLS = (\[[^\]]*\]);/)[1]);
   assert.deepEqual(TRIGGERS.map(([skill]) => skill), listed);
+});
+
+test("session-context prints nothing when turned off", () => {
+  for (const env of [{ WISDOM_LENS_CONTEXT: "off" }, { CLAUDE_PLUGIN_OPTION_SESSION_CONTEXT: "false" }]) {
+    const result = spawnSync(process.execPath, [contextScript], { encoding: "utf8", env: { ...process.env, ...env } });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, "", JSON.stringify(env));
+  }
 });

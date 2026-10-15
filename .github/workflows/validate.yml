@@ -1,13 +1,22 @@
 name: Validate skills and optional adapters
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         node: [20, 22, 24]
@@ -20,9 +29,6 @@ jobs:
       - run: node scripts/trigger-test.mjs
       - run: node scripts/tripwire-check.mjs --self-test
       - run: node scripts/skill-eval.mjs
-      - run: node scripts/rot-check.mjs
+      - run: node scripts/rot-check.mjs --offline
       - run: node scripts/token-audit.mjs
-      - run: node --test tests/jev-adapter.test.mjs
-      - run: node --test tests/tripwire-check.test.mjs
-      - run: node --test tests/tripwire-hook.test.mjs
-      - run: node --test tests/hooks-config.test.mjs
+      - run: node --test tests/*.test.mjs

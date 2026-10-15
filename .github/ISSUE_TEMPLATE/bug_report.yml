@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in Wisdom Lens does not work as documented, or a loop was not caught.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If the Stop check or the tripwire blocked something it shouldn't have, use the false block form instead. Report security problems privately (see SECURITY.md), not here. Remove secrets and private code before pasting anything.
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      description: Where you installed Wisdom Lens.
+      options:
+        - Claude Code (plugin)
+        - Codex
+        - Kimi Code CLI
+        - OpenClaw
+        - npx skills (skills only)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: The wisdom-lens version your host shows, or the tag or commit you installed from.
+      placeholder: "1.4.0"
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node version
+      description: The output of `node --version`. The hooks need Node 20 or newer.
+      placeholder: "v22.11.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. For a missed loop, list the tool calls in order.
+    validations:
+      required: true
+  - type: textarea
+    id: hook-output
+    attributes:
+      label: Hook output
+      description: Any hook message or error, for example a `HALT-LOOP` line, or the text Claude Code shows after `Stop hook error occurred · ctrl+o to see`.
+      render: text

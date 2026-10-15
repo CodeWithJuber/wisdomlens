@@ -15,9 +15,13 @@
  * Usage:
  *   node scripts/session-context.mjs   # print the context (hook mode)
  *
+ * Set WISDOM_LENS_CONTEXT=off (or the session_context plugin option to false)
+ * to print nothing.
+ *
  * Dependency-free (node stdlib only). Importing this module performs no I/O.
  */
 
+import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 /** Skills that carry a SessionStart trigger, in load order when ambiguous. */
@@ -64,6 +68,24 @@ export function sessionContext() {
   ].join("\n");
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+const OFF_VALUES = /^(0|false|off|no)$/i;
+
+/** True when the user turned the session checklist off (env var or plugin option). */
+export function contextDisabled(env = process.env) {
+  return [env.WISDOM_LENS_CONTEXT, env.CLAUDE_PLUGIN_OPTION_SESSION_CONTEXT].some((value) =>
+    OFF_VALUES.test(String(value ?? "").trim()),
+  );
+}
+
+/** Compares real paths, so the hook still runs when the plugin dir is reached through a symlink. */
+function isMainModule() {
+  try {
+    return Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule() && !contextDisabled()) {
   process.stdout.write(`${sessionContext()}\n`);
 }
