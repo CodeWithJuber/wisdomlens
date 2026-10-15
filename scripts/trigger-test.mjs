@@ -5,10 +5,13 @@
  *
  * The SessionStart hook (scripts/session-context.mjs) names three skills and
  * gives one trigger line each. This test feeds ~20 sample user prompts and asserts that
- * each skill's own frontmatter description contains at least one trigger
- * token matching the prompt. If a skill's description drifts away from the
- * trigger language (or the hook names a skill whose description no longer
- * covers the trigger), this fails.
+ * each skill's own frontmatter description matches the prompt: either a
+ * quoted trigger phrase from the description appears in the prompt, or a
+ * description word (stopwords such as "this" or "with" excluded) matches a
+ * prompt word. If a skill's description drifts away from the trigger
+ * language (or the hook names a skill whose description no longer covers the
+ * trigger), this fails. NEGATIVE_SAMPLES assert that off-topic prompts match
+ * no skill, so a description made of generic words cannot pass.
  *
  * Dependency-free (node stdlib only). Exit 0 when every sample matches,
  * non-zero with details when any sample fails.
@@ -51,9 +54,51 @@ const SAMPLES = [
   { skill: "new-lens", prompt: "Why is AI oversight needed for agent problems?" },
 ];
 
-/** Lowercase alphanumeric tokens of length >= 4 ("ai", "it", "do" carry no signal). */
+// Prompts that must NOT match the listed skills. Without these, a matcher
+// that accepts any shared word passes for any description.
+const NEGATIVE_SAMPLES = [
+  { prompt: "Rename this variable", notSkills: SKILLS },
+  { prompt: "What time is lunch with everything", notSkills: SKILLS },
+  { prompt: "Format this date as ISO 8601", notSkills: SKILLS },
+  { prompt: "Should I take the job?", notSkills: ["new-lens", "builder-protocol"] },
+];
+
+/** Common words that carry no trigger signal; they never count as a match. */
+const STOPWORDS = new Set([
+  "about", "also", "anything", "does", "everything", "from", "have", "help",
+  "into", "just", "like", "make", "more", "need", "needs", "only", "said",
+  "says", "should", "skill", "some", "something", "that", "their", "them",
+  "then", "there", "these", "they", "things", "this", "those", "time",
+  "times", "used", "user", "very", "want", "what", "when", "where", "which",
+  "will", "with", "without", "would", "your",
+]);
+
+/** Lowercase alphanumeric tokens of length >= 4 ("ai", "it", "do" carry no signal), minus stopwords. */
 function tokenize(text) {
-  return text.toLowerCase().split(/[^a-z0-9]+/).filter((token) => token.length >= 4);
+  return text
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length >= 4 && !STOPWORDS.has(token));
+}
+
+/** The quoted trigger phrases in a description, e.g. "should I" or "push it". */
+function quotedPhrases(description) {
+  return [...description.matchAll(/"([^"]+)"/g)].map((match) => match[1].toLowerCase());
+}
+
+function containsPhrase(prompt, phrase) {
+  const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}($|[^a-z0-9])`).test(prompt.toLowerCase());
+}
+
+/** Phrases and words of `description` that match `prompt`; empty when nothing does. */
+function matches(description, prompt) {
+  const phrases = quotedPhrases(description).filter((phrase) => containsPhrase(prompt, phrase));
+  const promptTokens = tokenize(prompt);
+  const words = [...new Set(tokenize(description))].filter((descriptionToken) =>
+    promptTokens.some((promptToken) => tokensMatch(descriptionToken, promptToken)),
+  );
+  return [...phrases.map((phrase) => `"${phrase}"`), ...words];
 }
 
 /**
@@ -95,12 +140,7 @@ function main() {
       failures.push(`sample targets unknown skill '${skill}': "${prompt}"`);
       continue;
     }
-    const description = readDescription(skill);
-    const descriptionTokens = [...new Set(tokenize(description))];
-    const promptTokens = tokenize(prompt);
-    const matched = descriptionTokens.filter((descriptionToken) =>
-      promptTokens.some((promptToken) => tokensMatch(descriptionToken, promptToken)),
-    );
+    const matched = matches(readDescription(skill), prompt);
     checked++;
     if (matched.length === 0) {
       failures.push(`[${skill}] no trigger token in description matches prompt: "${prompt}"`);
@@ -109,7 +149,19 @@ function main() {
     }
   }
 
-  console.log(`\ntrigger-test: ${checked - failures.length}/${checked} samples matched`);
+  for (const { prompt, notSkills } of NEGATIVE_SAMPLES) {
+    for (const skill of notSkills) {
+      const matched = matches(readDescription(skill), prompt);
+      checked++;
+      if (matched.length > 0) {
+        failures.push(`[${skill}] off-topic prompt "${prompt}" matched: ${matched.join(", ")}`);
+      } else {
+        console.log(`ok   [${skill}] does not match "${prompt}"`);
+      }
+    }
+  }
+
+  console.log(`\ntrigger-test: ${checked - failures.length}/${checked} samples passed`);
   if (failures.length > 0) {
     console.error("trigger-test FAILED:");
     for (const failure of failures) console.error(`  - ${failure}`);

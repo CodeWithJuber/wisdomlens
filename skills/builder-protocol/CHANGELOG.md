@@ -11,6 +11,8 @@
 
 Initial public release of the skill as a standalone pack.
 
+Not everything below shipped on that date: `references/pressure-tests.md`, `references/adopting-this-skill.md` and the References section that links them landed on 2026-10-14 (commit 9e6222c) without a version bump.
+
 ### Added
 - Twelve rules for builders (verify, specify, write, ship, log, and eight more), each with a checkable practice.
 - Rule 1 red-flags table (five halt signals) and rationalization-prevention table (six excuses with answers).

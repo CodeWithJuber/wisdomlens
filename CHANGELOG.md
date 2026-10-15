@@ -2,6 +2,23 @@
 
 Changes to the plugin as a whole: hooks, agent, manifests, CI and docs. Each skill also keeps its own `CHANGELOG.md` under `skills/<name>/`. Entries before 1.4.0 are reconstructed from git history; for 1.0.0 to 1.2.1, see the git log.
 
+## [Unreleased]
+
+### Fixed
+- Tripwire logs no longer pile up: logs untouched for 7 days are deleted when a new session's log starts.
+- A subagent's tool calls are counted in their own tripwire log when the hook payload carries an `agent_id`, so they neither break nor extend the parent session's run of identical calls.
+- `scripts/trigger-test.mjs` can now fail: common words such as "this", "with" and "should" no longer count as a match, quoted trigger phrases in a description count, and off-topic prompts (for example "Rename this variable") must match no skill.
+- The tripwire hook tests delete the temp folders they create.
+
+### Added
+- `scripts/validate.mjs` fails when a skill's `metadata.version` is not the newest `## [x.y.z]` entry in its `CHANGELOG.md`.
+- `scripts/token-audit.mjs` fails when the README's context-cost figures drift from what it measures.
+- Tests: parallel tripwire calls keep every record, subagent logs stay separate, stale logs are pruned, and the session-context hook runs through a symlinked plugin path.
+- The builder-protocol and new-lens 1.0.0 changelog entries now say which items landed later, on 2026-10-14, without a version bump.
+
+### Changed
+- SECURITY.md states that the tripwire reads the full tool input to hash it, how each command hook fails open, and the new log pruning and per-subagent logs.
+
 ## [1.4.0] — 2026-10-15
 
 ### Fixed

@@ -10,13 +10,16 @@ automatically — read them before installing.
 | Component | When | What it does | Network | Writes |
 | --- | --- | --- | --- | --- |
 | `scripts/session-context.mjs` | session start, `/clear`, compaction | adds ~1.6k characters of checklist text to context | none | nothing |
-| `scripts/tripwire-check.mjs --hook` | before every tool call | compares a hash of the call with the previous calls; blocks the 3rd and any later identical call in a row | none | `<plugin data dir>/tripwire/<session>.log`, one 32-character hash per call, compacted to the last 20 after 200, mode 0600 |
+| `scripts/tripwire-check.mjs --hook` | before every tool call | reads the tool name and the full tool input (file contents, commands) from stdin, hashes them, and compares the hash with the previous calls; blocks the 3rd and any later identical call in a row | none | `<plugin data dir>/tripwire/<session>.log` (one per subagent when the call carries an `agent_id`), one 32-character hash per call, compacted to the last 20 after 200, mode 0600; logs untouched for 7 days are deleted when a new one starts |
 | Stop prompt hook (`hooks/hooks.json`) | end of every turn | sends the hook input, including your last reply, to Claude Code's own model to judge it | Claude Code's existing model connection | nothing |
 | `skills/decision-engine/scripts/jev-decide.mjs` / `jev-adapter.mjs` | only when you run them | typed scoring; never executes the recommendation | one POST to `https://api.typesafe.ai`, retried up to 2 times on 429/5xx | nothing |
 
-The tripwire log holds one-way hashes, never raw tool inputs. Its directory is
-created with mode 0700; when the hook runs outside Claude Code (for example
-the README demo), it uses `wisdom-lens-<uid>/tripwire/` in the system temp
+Both command hooks fail open. The tripwire exits 0 and lets the call through
+on a malformed payload or any state error; the session-context hook reads no
+input and writes nothing, and if it fails the session starts without the
+checklist. The tripwire log holds one-way hashes, never raw tool inputs. Its
+directory is created with mode 0700; when the hook runs outside Claude Code
+(for example the README demo), it uses `wisdom-lens-<uid>/tripwire/` in the system temp
 directory instead of the plugin data directory, and keeps no state (allowing
 the call) if that folder is a symlink or belongs to another user. To turn the
 session checklist or the tripwire off, see

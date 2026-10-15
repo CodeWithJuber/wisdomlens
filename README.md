@@ -110,7 +110,7 @@ Start a new session after installation. Host permissions and approval policies s
 
 Multiple skills can fire on the same prompt. See [skill-routing](skills/decision-engine/references/skill-routing.md) for the conflict matrix, precedence rules, and the "minimum useful skills" selection rule.
 
-**Context cost:** about 400 tokens per session for the session checklist (1,621 characters). Each skill's SKILL.md loads only when it triggers (builder-protocol ~2.5k, decision-engine ~2.5k, new-lens ~4.3k tokens at 4 chars/token); reference files load on demand. `node scripts/token-audit.mjs` budgets the on-disk total (~27.4k tokens), which also counts scripts and changelogs the model never loads.
+**Context cost:** about 400 tokens per session for the session checklist (1,621 characters). Each skill's SKILL.md loads only when it triggers (builder-protocol ~2.5k, decision-engine ~2.5k, new-lens ~4.3k tokens at 4 chars/token); reference files load on demand. `node scripts/token-audit.mjs` budgets the on-disk total (~27.5k tokens), which also counts scripts and changelogs the model never loads.
 
 ## Agent
 
@@ -123,7 +123,7 @@ Multiple skills can fire on the same prompt. See [skill-routing](skills/decision
 Three hooks keep the skills honest:
 
 1. **Session context (SessionStart)** — `scripts/session-context.mjs` loads the skill triggers, the Builder's Protocol checklist (verify, specify, foam-check, mark uncertainty, attribute), and the tone check (straight speech, calibrated register, pressure awareness) at session start and again after `/clear` or compaction.
-2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call and blocks a call (exit 2, `HALT-LOOP`) when it is the third or later identical call in a row (same tool, same normalized arguments); any different call ends the run. It stores only a one-way hash per call in Claude Code's plugin data directory (removed on uninstall), never in your project, and fails open on any error.
+2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call and blocks a call (exit 2, `HALT-LOOP`) when it is the third or later identical call in a row (same tool, same normalized arguments); any different call ends the run. It stores only a one-way hash per call in Claude Code's plugin data directory (removed on uninstall; a subagent gets its own log, and logs untouched for 7 days are deleted), never in your project, and fails open on any error.
 3. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard. It is a `type: prompt` hook, so Claude Code sends the hook input, including your last reply, to its model once per turn.
 
 ### Turning hooks off
@@ -170,7 +170,7 @@ All terminology is universal and generic. The principles are framework-agnostic 
 
 ## Validation
 
-Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, package manifest, and the private-memory exclusion. It also runs the trigger test, the tripwire self-test, the skill eval, and the token audit. On success it prints `Validated 3 skills, 3 package manifests, 2 supporting JSON files, and relative references.` and exits 0.
+Run `node scripts/validate.mjs` to check every `SKILL.md` name, description, directory match, relative reference, that its `version` is the newest entry in its `CHANGELOG.md`, every package manifest, and the private-memory exclusion. It also runs the trigger test, the tripwire self-test, the skill eval, and the token audit. On success it prints `Validated 3 skills, 3 package manifests, 2 supporting JSON files, and relative references.` and exits 0.
 
 Run `node --test tests/jev-adapter.test.mjs` for the optional adapter's offline contract and decision-gate tests. These tests use simulated responses and do not establish live JEV accuracy.
 
@@ -178,14 +178,14 @@ Run `node scripts/skill-eval.mjs`: 51 deterministic self-consistency checks (spe
 
 Run `node scripts/rot-check.mjs` for the skill-rot audit: every cited statistic in new-lens carries a `reverify-by` date; the script fails when a source goes stale, when a `[S#]` cite dangles, or when a cited URL dies. CI runs it with `--offline` (no URL probes, and a stale date only warns); a weekly workflow runs the full check.
 
-Run `node scripts/token-audit.mjs` for the installed-cost audit: per-skill token budgets are CI-gated; the script fails if any skill exceeds its budget.
+Run `node scripts/token-audit.mjs` for the installed-cost audit: per-skill token budgets are CI-gated; the script fails if any skill exceeds its budget, or if the "Context cost" figures in this README no longer match what it measures.
 
 ## Update contract
 
 Every skill carries its own `CHANGELOG.md` and a `version` in SKILL.md frontmatter. When you change a skill, follow the contract:
 
 1. **Bump the version** — patch for fixes and clarifications, minor for new sections or practices, major for removed or renamed rules (consumers may reference rule numbers).
-2. **Add a CHANGELOG entry** — one bullet per change under a new version heading with today's date. No entry, no merge.
+2. **Add a CHANGELOG entry** — one bullet per change under a new version heading with today's date. No entry, no merge: `validate.mjs` fails when a skill's `version` is not the newest heading in its changelog.
 3. **Update `last_verified`** — set it to today's date (a convention; no script checks it yet).
 4. **Run the audits** — `node scripts/validate.mjs` must exit 0, including the token-audit budget check if you added content.
 
