@@ -24,7 +24,7 @@ the failure this page prevents.
 
 ## SessionStart order
 
-The SessionStart hooks name one line per skill. Load in this order when
+The SessionStart hook names one line per skill. Load in this order when
 ambiguous: builder-protocol (frame the work) → decision-engine (structure the
 choice) → new-lens (diagnose on failure). new-lens never plans; builder-protocol
 never diagnoses; decision-engine never executes.

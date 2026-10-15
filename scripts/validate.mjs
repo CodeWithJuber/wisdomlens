@@ -99,7 +99,7 @@ for (const [manifestPath, skillsKey] of manifests) {
   }
   const manifest = readJson(path);
   if (manifest.name !== "wisdom-lens") fail(`${manifestPath}: unexpected plugin name`);
-  if (manifest.version !== "1.3.0") fail(`${manifestPath}: version must match 1.3.0`);
+  if (manifest.version !== "1.3.1") fail(`${manifestPath}: version must match 1.3.1`);
   const skillsPath = resolve(root, manifest[skillsKey] ?? "");
   if (skillsPath !== join(root, "skills") || !existsSync(skillsPath)) {
     fail(`${manifestPath}: skills must resolve to ./skills/`);

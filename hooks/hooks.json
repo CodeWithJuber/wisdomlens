@@ -4,19 +4,10 @@
       {
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Wisdom Lens skills are installed. Load the builder-protocol skill before writing, changing, or shipping any code, or before declaring any work done — trigger: building, coding, verifying, or shipping.",
-            "statusMessage": "Wisdom Lens: builder-protocol trigger armed…"
-          },
-          {
-            "type": "prompt",
-            "prompt": "Wisdom Lens skills are installed. Load the decision-engine skill when the user faces a decision, tradeoff, or irreversible commitment — trigger: deciding, choosing, risk assessment, or high-stakes planning.",
-            "statusMessage": "Wisdom Lens: decision-engine trigger armed…"
-          },
-          {
-            "type": "prompt",
-            "prompt": "Wisdom Lens skills are installed. Load the new-lens skill when the agent is stuck in a repetition loop, hallucinating, being sycophantic, or producing disposable slop — trigger: doom loops, repeated failures, AI failure modes.",
-            "statusMessage": "Wisdom Lens: new-lens trigger armed…"
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-context.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Wisdom Lens: loading skill triggers and quality checks…"
           }
         ]
       }
@@ -39,13 +30,8 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Before finalizing your response, apply the Builder's Protocol quick checks:\n1. VERIFY: Did you check at least one factual claim or citation in this response?\n2. SPECIFY: Are quantities, criteria, or measurable outcomes included where relevant?\n3. FOAM CHECK: Would this response still be useful in six months, or is it foam?\n4. UNCERTAINTY: Have you marked what is known vs. inferred vs. guessed?\n5. ATTRIBUTION: Have you given honest credit where due?\nIf any check fails, revise before delivering.",
+            "prompt": "You decide whether Claude may end its turn. Hook input JSON: $ARGUMENTS\n\nApply these rules in order and stop at the first that matches.\n1. If \"stop_hook_active\" is true, respond {\"ok\": true}. Claude is already revising because a stop hook blocked once; blocking again only loops.\n2. Judge only \"last_assistant_message\". If it is empty, asks the user a question, or reports a blocker, respond {\"ok\": true}.\n3. Respond {\"ok\": false, \"reason\": \"...\"} only for one of these concrete defects, quoting the offending sentence and naming the fix in one line:\n   a. It says work is done, fixed, passing, tested, or verified, shows no evidence for that claim (a command, test result, output, file path, or source), and does not say the claim is unverified.\n   b. It states a citation, statistic, or quotation as certain with no source and no uncertainty marker.\n   c. It is hostile, evasive, or deliberately ambiguous toward the user.\n4. Otherwise respond {\"ok\": true}. Style, length, depth, tone preferences, missing known/inferred/guessed labels, attribution, and whether the response is \"foam\" are guidance loaded at session start, not reasons to block. When unsure, allow.\n\nRespond with the JSON object only.",
             "statusMessage": "Builder's Protocol check…"
-          },
-          {
-            "type": "prompt",
-            "prompt": "Apply the Wisdom Lens tone check: Is this response straight speech (direct, checkable, no weaponized ambiguity)? Does it answer one level above any hostility in the conversation? Does it match content and depth to the actual listener? If the user is under pressure, have you acknowledged the capacity guarantee (they were built to handle this) and offered the two-channel protocol (strategic patience + daily reset)? Adjust tone if needed.",
-            "statusMessage": "Wisdom Lens tone check…"
           }
         ]
       }

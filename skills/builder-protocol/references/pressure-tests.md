@@ -183,7 +183,7 @@ So it says:
 
 **Which rule catches it.** Rule 12 — No Favor-Debt ("Agreement priced is
 sycophancy"), operationalized through the "Is This Sycophancy?" diagnostic
-in Rule 1's Quick Diagnostics section. The Stop hook's tone check
+in Rule 1's Quick Diagnostics section. The session-start tone check
 ("calibrated register") is the mechanical reminder; the rule is what
 makes disagreement feel like the *expected* behavior rather than rudeness.
 
@@ -194,7 +194,7 @@ makes disagreement feel like the *expected* behavior rather than rudeness.
 Read one scenario per week. For each, ask: would my agent — as currently
 configured — do the wrong thing or the right thing? If the answer is "wrong"
 or "not sure", the corresponding rule needs reinforcement: add it to the
-SessionStart hook prompts, or tighten the Stop hook check that covers it.
+SessionStart hook context, or tighten the Stop hook check that covers it.
 
 A scenario your agent already passes is not a scenario to skip — it's a
 regression test. Re-run it after every skill update.

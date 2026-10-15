@@ -25,7 +25,7 @@ small team shipping with AI agents:
 | 3 — Write It Down, Degrade Gracefully | **rewrite** | The degradation ladder assumes a docs culture. If your team lives in chat, rewrite the practice around your actual handoff surface. |
 | 4 — Standing Instruction vs Salient Reward | **keep** | Universal. The only change most teams need is writing down *their* standing instructions. |
 | 5 — Ship; Output Is the Argument | **keep** | If your team already ships weekly, this is confirmation. If not, it's the intervention. |
-| 6 — Mark Uncertainty in Advance | **bind** | Pairs with Rule 1's verification. The `[known]/[inferred]/[guessed]` tags are enforceable in the Stop hook. |
+| 6 — Mark Uncertainty in Advance | **bind** | Pairs with Rule 1's verification. The `[known]/[inferred]/[guessed]` tags are on the session-start checklist; the Stop hook blocks the worst case, a citation or statistic stated as certain with no source. |
 | 7 — Ask People Who Already Know | **rewrite** | The `SEARCHED:` line practice is sound; the "specialist roster" assumes an org with specialists. Solo builders: rewrite as "check docs + one community source". |
 | 8 — Judge by What Remains | **keep** | A review lens, not a process. No enforcement needed. |
 | 9 — Log at the Smallest Unit | **bind** | Only if you have somewhere the log goes. A logging rule without a log destination is a wish. Bind it to your actual artifact store or drop it. |
