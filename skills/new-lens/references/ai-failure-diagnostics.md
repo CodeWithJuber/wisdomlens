@@ -80,7 +80,7 @@ More files/steps than expected?
 Agent seems to forget earlier instructions?
 ├── Check context window length
 │   ├── Long session? → Approaching degradation territory
-│   └── All models degrade with input length — 100% of them
+│   └── All 18 models tested degraded with input length [S6]
 ├── Was there a handoff or compaction?
 │   ├── Memory fails at transitions, not in storage
 │   └── Diff the summary against the actual session
@@ -116,7 +116,7 @@ Most organizations count only the first term. Count all six.
 - Duplicated code blocks up 81%; cross-file function calls (the reuse proxy) down 35% across 623M code changes [known] — GitClear "The AI Code Quality Maintainability Gap," 2026 [S5]. Correction: the draft's "reuse down 70%" mislabeled the metric; the −70% figure is the fall in moved/refactored lines (21% → 3.8%), not reuse.
 - All 18 tested frontier models show performance degradation as input length increases [known] — Chroma "Context Rot," July 2025 [S6]
 - 40% of US desk workers received "workslop" in the prior month [known]; ~$186/employee/month cost [inferred — survey-based extrapolation] — BetterUp Labs + Stanford Social Media Lab, "The Cost of Workslop," Sept 2025 [S7]
-- Endoscopists' unassisted adenoma detection rate fell from 28.4% to 22.4% after regular AI use [known] — The Lancet Gastroenterology & Hepatology, Aug 2025 (Romańczyk et al.) [S8]
+- Endoscopists' unassisted adenoma detection rate fell from 28.4% to 22.4% after regular AI use [known] — The Lancet Gastroenterology & Hepatology, Aug 2025 (Budzyń et al.) [S8]
 
 ## Sources
 
@@ -149,6 +149,5 @@ https://www.betterup.com/workslop
 Caveat [inferred]: self-reported survey data, not controlled measurement.
 reverify-by: 2027-04-01
 
-S8. Romańczyk et al., The Lancet Gastroenterology & Hepatology, Aug 2025 (AI-assisted colonoscopy deskilling study; 19 experienced endoscopists, 4 Polish centers).
-reverify-by: 2027-04-01
+S8. Budzyń K, Romańczyk M, et al., "Endoscopist deskilling risk after exposure to artificial intelligence in colonoscopy: a multicentre, observational study," Lancet Gastroenterol Hepatol 2025;10(10):896-903. DOI 10.1016/S2468-1253(25)00133-5.
 reverify-by: 2027-04-01

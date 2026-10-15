@@ -19,6 +19,11 @@
  *     warning and does NOT fail — a sandbox without egress must not red the
  *     build; the reverify-by dates are the hard rot gate.
  *
+ * --offline: skip check 3 (no network probes) and report a past reverify-by
+ * date as a warning instead of a failure. PR/push CI runs this mode, so the
+ * calendar alone can never red an unrelated change; the scheduled source-rot
+ * workflow (.github/workflows/source-rot.yml) runs the full check.
+ *
  * Exit 0 when all checks pass, non-zero with details otherwise.
  */
 
@@ -40,6 +45,10 @@ function warn(message) {
 }
 
 const today = new Date().toISOString().slice(0, 10);
+// --offline: no network probes, and a past reverify-by date warns instead of
+// failing. PR/push CI runs this; the scheduled source-rot workflow runs the
+// full check.
+const offline = process.argv.includes("--offline");
 
 const diagPath = join(
   root,
@@ -89,7 +98,7 @@ for (const block of sourceBlocks) {
     continue;
   }
   if (date < today) {
-    fail(
+    (offline ? warn : fail)(
       `${id}: reverify-by ${date} is past (today is ${today}) — re-verify the source before release`,
     );
   }
@@ -110,11 +119,13 @@ for (const id of cites) {
 }
 
 // --- Check 3: external URLs in the Sources section --------------------------
-const urls = [
-  ...new Set(
-    [...sourcesSection.matchAll(/https:\/\/[^\s)>"']+/g)].map((m) => m[0]),
-  ),
-];
+const urls = offline
+  ? []
+  : [
+      ...new Set(
+        [...sourcesSection.matchAll(/https:\/\/[^\s)>"']+/g)].map((m) => m[0]),
+      ),
+    ];
 for (const url of urls) {
   try {
     const out = execFileSync(
@@ -150,5 +161,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `rot-check: ${seen.size} sources dated and future-dated, ${cites.length} cites resolved, ${urls.length} URLs probed (${warnings.length} network warnings).`,
+  `rot-check: ${seen.size} sources dated, ${cites.length} cites resolved, ${urls.length} URLs probed (${warnings.length} warnings).`,
 );

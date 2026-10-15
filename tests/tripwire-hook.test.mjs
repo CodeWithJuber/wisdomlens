@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,11 +9,17 @@ import { sanitizeSessionId } from "../scripts/tripwire-check.mjs";
 
 const cli = fileURLToPath(new URL("../scripts/tripwire-check.mjs", import.meta.url));
 
-function hookRun(projectDir, payload, rawInput) {
-  return spawnSync(process.execPath, [cli, "--hook"], {
+function hookRun(projectDir, payload, rawInput, extraEnv = {}, script = cli) {
+  return spawnSync(process.execPath, [script, "--hook"], {
     input: rawInput !== undefined ? rawInput : JSON.stringify(payload),
     encoding: "utf8",
-    env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
+    env: {
+      ...process.env,
+      CLAUDE_PLUGIN_DATA: projectDir,
+      WISDOM_LENS_TRIPWIRE: "",
+      CLAUDE_PLUGIN_OPTION_TRIPWIRE: "",
+      ...extraEnv,
+    },
   });
 }
 
@@ -78,9 +84,9 @@ test("session id is sanitized so state cannot escape the state dir", () => {
   assert.equal(sanitizeSessionId("../../evil"), "evil");
   assert.equal(sanitizeSessionId(""), "default");
   hookRun(dir, payload("../../../etc-x", "grep", {}));
-  const stateDir = join(dir, ".wisdom-lens");
+  const stateDir = join(dir, "tripwire");
   const files = readdirSync(stateDir);
-  assert.deepEqual(files, ["tripwire-etc-x.json"]);
+  assert.deepEqual(files, ["etc-x.log"]);
   assert.ok(!existsSync(join(dir, "etc-x.json")));
 });
 
@@ -88,9 +94,84 @@ test("state persists across invocations and stays bounded", () => {
   const dir = freshProject();
   const event = payload("sess-e", "exec", { id: 1 });
   for (let i = 0; i < 5; i++) hookRun(dir, event);
-  const events = JSON.parse(
-    readFileSync(join(dir, ".wisdom-lens", "tripwire-sess-e.json"), "utf8"),
-  );
-  assert.equal(events.length, 5);
-  assert.deepEqual(events[0], { tool: "exec", args: { id: 1 } });
+  const lines = readFileSync(join(dir, "tripwire", "sess-e.log"), "utf8").trim().split("\n");
+  assert.equal(lines.length, 5);
+  for (const line of lines) assert.match(line, /^[0-9a-f]{32}$/);
+});
+
+test("a different call after a trip is allowed; only a live repeat blocks", () => {
+  const dir = freshProject();
+  const a = payload("sess-f", "Bash", { command: "npm test" });
+  assert.equal(hookRun(dir, a).status, 0);
+  assert.equal(hookRun(dir, a).status, 0);
+  assert.equal(hookRun(dir, a).status, 2);
+  assert.equal(hookRun(dir, payload("sess-f", "Read", { file_path: "a.js" })).status, 0);
+  assert.equal(hookRun(dir, payload("sess-f", "Edit", { file_path: "a.js" })).status, 0);
+  assert.equal(hookRun(dir, a).status, 0);
+  assert.equal(hookRun(dir, a).status, 0);
+  const again = hookRun(dir, a);
+  assert.equal(again.status, 2, again.stderr);
+  assert.ok(again.stderr.includes("WISDOM_LENS_TRIPWIRE=off"), "the block names the off switch");
+});
+
+test("raw tool input never reaches disk and nothing is written to the project", () => {
+  const data = freshProject();
+  const project = freshProject();
+  const secret = "sk-live-DO-NOT-STORE";
+  const event = payload("sess-g", "Write", { file_path: ".env", content: `KEY=${secret}` });
+  const result = hookRun(data, event, undefined, { CLAUDE_PROJECT_DIR: project });
+  assert.equal(result.status, 0, result.stderr);
+  const files = readdirSync(join(data, "tripwire"));
+  assert.ok(files.length > 0, "the hook kept state");
+  for (const name of files) {
+    assert.ok(!readFileSync(join(data, "tripwire", name), "utf8").includes(secret), name);
+  }
+  assert.deepEqual(readdirSync(project), []);
+});
+
+test("WISDOM_LENS_TRIPWIRE=off disables the hook", () => {
+  const dir = freshProject();
+  const event = payload("sess-h", "grep", { pattern: "x" });
+  for (let i = 0; i < 3; i++) {
+    assert.equal(hookRun(dir, event, undefined, { WISDOM_LENS_TRIPWIRE: "off" }).status, 0);
+  }
+  assert.ok(!existsSync(join(dir, "tripwire")));
+});
+
+test("the hook still runs when the plugin path goes through a symlink", { skip: process.platform === "win32" }, () => {
+  const dir = freshProject();
+  const link = join(freshProject(), "plugin");
+  symlinkSync(fileURLToPath(new URL("..", import.meta.url)), link, "dir");
+  const viaLink = join(link, "scripts", "tripwire-check.mjs");
+  const event = payload("sess-i", "grep", { pattern: "x" });
+  assert.equal(hookRun(dir, event, undefined, {}, viaLink).status, 0);
+  assert.equal(hookRun(dir, event, undefined, {}, viaLink).status, 0);
+  const third = hookRun(dir, event, undefined, {}, viaLink);
+  assert.equal(third.status, 2, third.stderr);
+});
+
+const posixOnly = { skip: process.platform === "win32" || typeof process.getuid !== "function" };
+
+test("without CLAUDE_PLUGIN_DATA the hook keeps state in a per-user temp dir", posixOnly, () => {
+  const tmp = freshProject();
+  const env = { TMPDIR: tmp, TMP: tmp, TEMP: tmp };
+  const event = payload("sess-j", "grep", { pattern: "x" });
+  assert.equal(hookRun("", event, undefined, env).status, 0);
+  assert.equal(hookRun("", event, undefined, env).status, 0);
+  assert.equal(hookRun("", event, undefined, env).status, 2);
+  assert.ok(existsSync(join(tmp, `wisdom-lens-${process.getuid()}`, "tripwire", "sess-j.log")));
+});
+
+test("the temp fallback refuses a symlinked state dir and fails open", posixOnly, () => {
+  const tmp = freshProject();
+  const elsewhere = freshProject();
+  symlinkSync(elsewhere, join(tmp, `wisdom-lens-${process.getuid()}`), "dir");
+  const env = { TMPDIR: tmp, TMP: tmp, TEMP: tmp };
+  const event = payload("sess-k", "grep", { pattern: "x" });
+  for (let i = 0; i < 3; i++) {
+    const result = hookRun("", event, undefined, env);
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(result.stderr.includes("allowing"), result.stderr);
+  }
+  assert.deepEqual(readdirSync(elsewhere), []);
 });

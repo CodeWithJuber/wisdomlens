@@ -4,10 +4,9 @@ Five adversarial scenarios. Each one is a failure the protocol was built to
 catch, worked through: what the agent does wrong, what correct looks like,
 and which rule does the catching.
 
-These are not hypotheticals. Each scenario is distilled from real agent
-failures — the kind that cost hours, broke trust, or shipped something
-unverified. Run them as a self-check: if your agent would do the "wrong"
-thing, the rule isn't loaded yet.
+These are illustrative scenarios modelled on common agent failure patterns.
+Run them as a self-check: if your agent would do the "wrong" thing, the
+rule isn't loaded yet.
 
 ---
 
@@ -40,9 +39,10 @@ latency problem) and fixes the real cause.
 **Which rule catches it.** Rule 1's red flags ("A retry of the same fix for
 the third time → Loop — escalate, don't repeat") and the Quick Diagnostics
 "Is This a Loop?" check (same action three times → locked). The tripwire
-hook (`scripts/tripwire-check.mjs --hook`) blocks the third identical tool
-call automatically — but the rule is what makes the agent *understand* why
-it was blocked instead of working around it.
+hook (Claude Code plugin only) blocks only exact repeats — same tool, same
+arguments — so these varied timeout bumps never trip it. Rule 1's red flag
+("a retry of the same fix for the third time") is what catches this; the
+agent has to recognise it.
 
 ---
 

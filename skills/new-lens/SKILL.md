@@ -13,8 +13,8 @@ description: >
   (use decision-engine).
 license: MIT
 metadata:
-  version: "1.0.0"
-  last_verified: "2026-10-12"
+  version: "1.0.1"
+  last_verified: "2026-10-15"
   source: "The New Lens"
 ---
 
@@ -35,7 +35,7 @@ The agent fails, apologizes, changes files, introduces new bugs — motion witho
 
 - **Every Clarifying Question Compounds Its Price**: Extract requirements sufficient to act, then act. A runnable test beats a refined question. Count your questions; treat each as cost against delivery.
 - **The Loop Breaks from the Inside**: Nothing external changes until something internal changes. Change the state — rewind, reset, restart clean.
-- **Locked Processors Don't Reflect**: Either you are reflecting, or something is locking the processor. Emit `HALT-LOOP` and stop issuing tool calls after three consecutive identical tool calls (same tool name + same normalized arguments). The tripwire check is implemented in scripts/tripwire-check.mjs and runs as a pre-tool-call hook.
+- **Locked Processors Don't Reflect**: Either you are reflecting, or something is locking the processor. Emit `HALT-LOOP` and stop issuing tool calls after three consecutive identical tool calls (same tool name + same normalized arguments). In the Claude Code plugin a pre-tool-call hook enforces this for exact repeats; on other hosts, and for varied retries of the same idea, you must notice the loop yourself.
 - **The Loop's Last Hook Is the Finish Line**: Completion is the highest-temptation state. Define done, then be done. The loop's hardest exit is the step just before done.
 - **Question Discipline**: Gate every investigation with: what decision does this answer change? Questions with no operational consequence are scope creep wearing the mask of rigor.
 
@@ -77,7 +77,7 @@ The machine is past-bound by construction. Inherited bias scales silently.
 ### Chapter 6: Confident Guessing — Fluency Without Knowledge
 Hallucination is industrial now. 19.7% of recommended packages are fabricated (cite: [S1] in references/ai-failure-diagnostics.md — "Key Statistics (2025-2026)").
 
-- **The Exchange Rate of Conjecture Is Zero**: No quantity of plausible guesses converts into truth. Every factual claim in a deliverable (report, summary, review) must be followed by one of the tags [known], [inferred], or [guessed], citing the verification source. Deliverables are linted by skills-lint.mjs; an untagged factual claim fails the lint.
+- **The Exchange Rate of Conjecture Is Zero**: No quantity of plausible guesses converts into truth. Every factual claim in a deliverable (report, summary, review) must be followed by one of the tags [known], [inferred], or [guessed], citing the verification source. Nothing checks this automatically; apply the tags yourself.
 - **Sign for Every Instrument**: Provenance-tracking as accountability. The relay carries the liability.
 - **The Distortion Is in the Delivery, Not the Source**: Fluent, citation-shaped output is the cheapest forgery of authority. Open the source.
 - **No Verdict Without Full Understanding**: A judgment issued without actually understanding the material is void. Accept and reject at the speed of your comprehension, not the model's fluency.
@@ -95,7 +95,7 @@ AI writes new code instead of finding old code. Duplication up 81%, reuse down 3
 - **Community Standards Are the Shared Memory**: The packages worth depending on are the ones a community actively curates.
 
 ### Chapter 8: Over-Complication — Rigor That Manufactures Complexity
-The agent does more than asked. $500+ burned on a 60-line edit that never shipped.
+The agent does more than asked. One reported case: $500+ spent on a 60-line edit that never shipped [guessed — illustrative anecdote].
 
 - **Learnability Is a Design Spec**: If a teammate can't reconstruct it at 2 a.m., simplify.
 - **The Ease Gradient**: A tool trending toward more ceremony per unit of outcome is moving wrong. Count steps per shipped result; cut whatever grows.
@@ -103,7 +103,7 @@ The agent does more than asked. $500+ burned on a 60-line edit that never shippe
 - **Question Discipline and the Calibrated Middle**: Budget tokens, abstractions, and infrastructure at the standing middle — neither starved nor flooded.
 
 ### Chapter 9: The Memory Hole — Context Lost Mid-Mission
-Every model shows performance degradation as input length increases. Memory fails at transitions.
+All 18 frontier models Chroma tested degraded as input grew [S6]. Memory fails at transitions.
 
 - **Goodwill Does Not Survive Handoff**: Memory fails at context switches. Externalize at every transition.
 - **Write Everything; Design the Degradation Ladder**: Canonical doc, working notes, committed artifacts, escrowed state. Decide the ladder before the journey.
@@ -123,7 +123,7 @@ Models affirm users 49% more than humans. Sycophancy is measured, not anecdotal 
 - **The Exception Clause**: Generation is not the problem; generation untethered from action is. Weld machine words to verification.
 
 ### Chapter 11: Slop Economics — Generation Without Scarcity
-Half the written web is machine-made. Generation cost at zero means volume always outbids value.
+A large and growing share of new web text is machine-made [inferred]. Generation cost at zero means volume always outbids value.
 
 - **The Durable-Value Filter**: Judge output by what it becomes downstream — still referenced in six months? Foam evaporates; what people actually use is what stays.
 - **Abundance Is Not an Argument**: Define "good" before opening the firehose. Volume is a production cost, not a virtue.
@@ -141,7 +141,7 @@ Trust systems no one can open. Disclosure makes AI visible, not explainable.
 - **Maker-Side Knowledge**: Only the maker can fully instrument it. Demand maker-side artifacts.
 
 ### Chapter 13: Unwanted Costs — The Invoice Nobody Priced
-2026 token reckoning: budgets burned by April. One edit cost $500+ across three sessions.
+2026 token reckoning: usage-priced agents make cost a design constraint [inferred].
 
 - **A Plan With No Exception Clause Fails Overnight**: Every autonomous plan needs caps, exits, tripwires. The plan that cannot say "if" will meet the outage that says "no."
 - **The Incident-Response Sequence**: Loss acknowledged → blame-trading stopped → the actual error named → the replacement plan specified. A postmortem that never reaches "we were wrong" is foam.
@@ -190,6 +190,10 @@ Workflow Failures: Reuse before reinvent → Simplify to the middle → External
 Relationship Failures: Discount flattery → Filter foam → Audit the box → Price the cost → Hold values above preferences
 The Human's Answer: Kindle, don't grow → Do the work yourself → Assign meaning → Keep learning → Verify, specify, write, ship, log
 
-For detailed chapter content, field practices, and anchors, see the `references/` directory.
+For detail beyond this page, read the reference that fits:
+
+- Diagnosing a live failure: read [references/ai-failure-diagnostics.md](references/ai-failure-diagnostics.md).
+- Concrete moves per chapter: [references/field-practices.md](references/field-practices.md).
+- Quoting a chapter's anchor line: [references/anchors.md](references/anchors.md).
 
 See the [changelog](CHANGELOG.md) for version history. Before changing this skill, read the repo README's "Update contract" section.

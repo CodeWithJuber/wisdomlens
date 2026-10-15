@@ -17,15 +17,20 @@
  * HALT-LOOP message on stderr when one does.
  *
  * Hook mode (`--hook`) consumes a single Claude Code PreToolUse payload from
- * stdin, appends the event to per-session state, and blocks (exit 2) when
- * the third consecutive identical call arrives. Registered in
+ * stdin and blocks (exit 2) only while the newest calls are a run of >= 3
+ * identical calls; a different call ends the run. It stores a one-way hash
+ * per call (never the raw tool input) in a per-session log under the plugin
+ * data dir (CLAUDE_PLUGIN_DATA, else a per-user temp dir), never in the
+ * user's project. Set WISDOM_LENS_TRIPWIRE=off to turn it off. Registered in
  * hooks/hooks.json so the tripwire actually runs before every tool call.
  *
  * Dependency-free (node stdlib only). Importing this module performs no I/O.
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { createHash } from "node:crypto";
+import { appendFileSync, lstatSync, mkdirSync, readFileSync, realpathSync, renameSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const HALT_LOOP_MESSAGE = "HALT-LOOP: same action three times — halt and change approach";
@@ -94,9 +99,12 @@ export function scanSequence(events, limit = DEFAULT_LIMIT) {
   return null;
 }
 
-/** State directory for --hook mode; never throws. */
-export const HOOK_STATE_DIRNAME = ".wisdom-lens";
-export const HOOK_MAX_EVENTS = 100;
+/** Hook state lives outside the user's repo: the plugin data dir, else a per-user temp dir. */
+export const HOOK_STATE_DIRNAME = "tripwire";
+/** A session log is compacted past HOOK_MAX_LINES; only the trailing run matters. */
+export const HOOK_MAX_LINES = 200;
+export const HOOK_KEEP_LINES = 20;
+const OFF_VALUES = /^(0|false|off|no)$/i;
 
 /** Keep session ids filename-safe (no path traversal); fall back to "default". */
 export function sanitizeSessionId(sessionId) {
@@ -104,30 +112,58 @@ export function sanitizeSessionId(sessionId) {
   return clean || "default";
 }
 
-export function hookStateDir() {
-  return join(process.env.CLAUDE_PROJECT_DIR || process.cwd(), HOOK_STATE_DIRNAME);
+/** True when the user turned the tripwire off (env var or plugin option). */
+export function tripwireDisabled(env = process.env) {
+  return [env.WISDOM_LENS_TRIPWIRE, env.CLAUDE_PLUGIN_OPTION_TRIPWIRE].some((value) =>
+    OFF_VALUES.test(String(value ?? "").trim()),
+  );
 }
 
-export function hookStateFile(sessionId) {
-  return join(hookStateDir(), `tripwire-${sanitizeSessionId(sessionId)}.json`);
+export function hookStateDir(env = process.env) {
+  const uid = typeof process.getuid === "function" ? process.getuid() : "user";
+  const base = env.CLAUDE_PLUGIN_DATA || join(tmpdir(), `wisdom-lens-${uid}`);
+  return join(base, HOOK_STATE_DIRNAME);
 }
 
-function readHookState(file) {
-  try {
-    const parsed = JSON.parse(readFileSync(file, "utf8"));
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+export function hookStateFile(sessionId, env = process.env) {
+  return join(hookStateDir(env), `${sanitizeSessionId(sessionId)}.log`);
+}
+
+/**
+ * The temp fallback sits in a directory other users can write to (e.g. /tmp).
+ * Refuse a base dir that is a symlink or belongs to someone else, so another
+ * local user cannot redirect or read the log. No-op where uids don't exist.
+ */
+function assertOwnDir(dir) {
+  if (typeof process.getuid !== "function") return;
+  const stat = lstatSync(dir);
+  if (!stat.isDirectory() || stat.uid !== process.getuid()) {
+    throw new Error(`${dir} is a symlink or not owned by this user`);
   }
+}
+
+/** One-way digest of a call: equality is all the tripwire needs, so raw inputs never touch disk. */
+export function hookKey(tool, args) {
+  return createHash("sha256").update(`${String(tool)}::${normalizeArgs(args)}`).digest("hex").slice(0, 32);
+}
+
+/** Length of the run of `key` at the END of the log; only a live repeat counts. */
+export function trailingRun(lines, key) {
+  let run = 0;
+  for (let i = lines.length - 1; i >= 0 && lines[i] === key; i--) run++;
+  return run;
 }
 
 /**
  * --hook: consume one Claude Code PreToolUse payload from stdin.
  *
- * Appends {tool, args} to the per-session event log and blocks (exit 2,
- * HALT-LOOP on stderr) when the third consecutive identical call arrives.
- * Fail-open: any malformed payload or state error allows the tool call so a
- * broken hook never bricks the agent session.
+ * Appends a one-way hash of {tool, args} to an append-only per-session log
+ * under the plugin data dir, and blocks (exit 2, HALT-LOOP on stderr) only
+ * while the newest calls are a run of >= 3 identical calls. A different call
+ * ends the run, so one trip never blocks unrelated calls. Raw tool input is
+ * never written to disk. WISDOM_LENS_TRIPWIRE=off (or the plugin option)
+ * turns the hook off. Fail-open: any malformed payload or state error allows
+ * the tool call so a broken hook never bricks the agent session.
  */
 export function hookMode() {
   let payload;
@@ -137,6 +173,8 @@ export function hookMode() {
     console.error("tripwire-check --hook: could not parse hook payload; allowing");
     process.exit(0);
   }
+  // Checked after stdin is consumed, so the host never writes into a closed pipe.
+  if (tripwireDisabled()) process.exit(0);
   if (payload === null || typeof payload !== "object") {
     console.error("tripwire-check --hook: hook payload is not an object; allowing");
     process.exit(0);
@@ -146,20 +184,36 @@ export function hookMode() {
     // Not a tool-call payload (or a future event shape) — nothing to count.
     process.exit(0);
   }
-  const file = hookStateFile(payload.session_id);
-  const events = readHookState(file);
-  events.push({ tool, args: payload.tool_input ?? null });
-  const window = events.slice(-HOOK_MAX_EVENTS);
+  let run = 0;
   try {
-    mkdirSync(hookStateDir(), { recursive: true });
-    writeFileSync(file, JSON.stringify(window));
+    const dir = hookStateDir();
+    if (!process.env.CLAUDE_PLUGIN_DATA) {
+      const base = dirname(dir);
+      mkdirSync(base, { recursive: true, mode: 0o700 });
+      assertOwnDir(base);
+    }
+    mkdirSync(dir, { recursive: true, mode: 0o700 });
+    const file = hookStateFile(payload.session_id);
+    const key = hookKey(tool, payload.tool_input ?? null);
+    // O_APPEND: parallel tool calls never overwrite each other's records.
+    appendFileSync(file, `${key}\n`, { mode: 0o600 });
+    const lines = readFileSync(file, "utf8").split("\n").filter(Boolean);
+    run = trailingRun(lines, key);
+    if (lines.length > HOOK_MAX_LINES) {
+      const tmp = `${file}.${process.pid}.tmp`;
+      writeFileSync(tmp, `${lines.slice(-HOOK_KEEP_LINES).join("\n")}\n`, { mode: 0o600 });
+      renameSync(tmp, file);
+    }
   } catch (error) {
-    console.error(`tripwire-check --hook: cannot persist state (${error.message}); allowing`);
+    console.error(`tripwire-check --hook: cannot use state (${error.message}); allowing`);
     process.exit(0);
   }
-  const trip = scanSequence(window);
-  if (trip) {
-    console.error(`${trip.message} (tool "${trip.tool}" repeated ${trip.count}x consecutively)`);
+  if (run >= DEFAULT_LIMIT) {
+    console.error(
+      `${HALT_LOOP_MESSAGE} (tool "${tool}" called ${run}x in a row with identical arguments). ` +
+        "Read the last result and change the command, arguments, or hypothesis before retrying. " +
+        "To turn the tripwire off, set WISDOM_LENS_TRIPWIRE=off.",
+    );
     process.exit(2);
   }
   process.exit(0);
@@ -336,6 +390,15 @@ function main(argv) {
   process.exit(0);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+/** Compares real paths, so the CLI still runs when the plugin dir is reached through a symlink. */
+function isMainModule() {
+  try {
+    return Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
   main(process.argv.slice(2));
 }

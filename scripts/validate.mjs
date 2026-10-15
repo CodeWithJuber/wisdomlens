@@ -87,8 +87,25 @@ const manifests = [
   ["kimi.plugin.json", "skills"],
 ];
 
-for (const jsonPath of [".claude-plugin/marketplace.json", "hooks/hooks.json"]) {
-  readJson(join(root, jsonPath));
+// One version, declared in .claude-plugin/plugin.json; every other manifest must match it.
+const version = String(readJson(join(root, ".claude-plugin/plugin.json")).version ?? "");
+if (!/^\d+\.\d+\.\d+$/.test(version)) fail(`.claude-plugin/plugin.json: version "${version}" is not semver`);
+
+const marketplace = readJson(join(root, ".claude-plugin/marketplace.json"));
+readJson(join(root, "hooks/hooks.json"));
+if (marketplace.version !== version) {
+  fail(`.claude-plugin/marketplace.json: version ${marketplace.version} must match ${version}`);
+}
+for (const plugin of marketplace.plugins ?? []) {
+  if (plugin.version !== version) {
+    fail(`.claude-plugin/marketplace.json: plugins[${plugin.name}].version ${plugin.version} must match ${version}`);
+  }
+}
+
+const changelogPath = join(root, "CHANGELOG.md");
+const changelog = existsSync(changelogPath) ? readFileSync(changelogPath, "utf8") : "";
+if (!changelog.split("\n").some((line) => line.startsWith(`## [${version}]`))) {
+  fail(`CHANGELOG.md: add a "## [${version}] — YYYY-MM-DD" entry for the current version`);
 }
 
 for (const [manifestPath, skillsKey] of manifests) {
@@ -99,7 +116,7 @@ for (const [manifestPath, skillsKey] of manifests) {
   }
   const manifest = readJson(path);
   if (manifest.name !== "wisdom-lens") fail(`${manifestPath}: unexpected plugin name`);
-  if (manifest.version !== "1.3.1") fail(`${manifestPath}: version must match 1.3.1`);
+  if (manifest.version !== version) fail(`${manifestPath}: version ${manifest.version} must match ${version}`);
   const skillsPath = resolve(root, manifest[skillsKey] ?? "");
   if (skillsPath !== join(root, "skills") || !existsSync(skillsPath)) {
     fail(`${manifestPath}: skills must resolve to ./skills/`);
