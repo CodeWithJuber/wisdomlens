@@ -30,17 +30,17 @@ export const ROUTES = [
   [
     "builder-protocol",
     /\b(ship (it|this)|ready to (merge|ship)|merge (the |this )?(pr|pull request|branch)|deploy\w*|to (production|prod)|acceptance criteria|spec (this|it) out|review (this|my|the) (plan|pr|diff)|the work is done|mark (it|this) (as )?done|definition of done)\b/i,
-    "shipping or declaring work done: verify with evidence and state acceptance criteria",
+    "shipping or done: show evidence",
   ],
   [
     "decision-engine",
     /\b(should (i|we)|decid\w*|decision|which (option|one) is (best|better)|pros and cons|trade-?offs?|worth it|risk assessment|negotiat\w*|go or no-go|make the call|faisla|kaunsa)\b/i,
-    "a decision or tradeoff: run the structured decision framework",
+    "decision or tradeoff",
   ],
   [
     "new-lens",
     /\b(hallucinat\w*|sycophan\w*|doom loop|stuck in a loop|loop(ed)? (three|3|again)|keeps? (failing|repeating|looping)|going in circles|off track|agreed with everything|ai failure modes?|slop)\b/i,
-    "an AI failure mode (loop, hallucination, sycophancy, slop): diagnose before retrying",
+    "AI failure mode: diagnose before retrying",
   ],
 ];
 
@@ -54,10 +54,8 @@ export function route(prompt) {
 export function routeContext(prompt) {
   const hits = route(prompt);
   if (hits.length === 0) return "";
-  return [
-    "Wisdom Lens routing for this prompt (a suggestion, not an instruction):",
-    ...hits.map(({ skill, why }) => `- Load the ${skill} skill: ${why}.`),
-  ].join("\n");
+  // One line: this lands next to the prompt on every match, so every word costs tokens.
+  return `Wisdom Lens skill hint: ${hits.map(({ skill, why }) => `${skill} (${why})`).join("; ")}`;
 }
 
 const OFF_VALUES = /^(0|false|off|no)$/i;

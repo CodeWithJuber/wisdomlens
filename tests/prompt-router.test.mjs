@@ -73,8 +73,9 @@ test("UserPromptSubmit runs the router as a command hook", () => {
 test("the hook prints plain-text routing for a matching prompt", () => {
   const result = runHook(JSON.stringify({ prompt: "Help me decide between two vendors" }));
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /^Wisdom Lens routing for this prompt/);
-  assert.match(result.stdout, /- Load the decision-engine skill: /);
+  assert.match(result.stdout, /^Wisdom Lens skill hint: /);
+  assert.match(result.stdout, /decision-engine \(/);
+  assert.equal(result.stdout.trim().split("\n").length, 1, "one line keeps the per-prompt cost small");
   assert.ok(!result.stdout.trimStart().startsWith("{"), "plain text, so Claude Code adds it as context");
 });
 

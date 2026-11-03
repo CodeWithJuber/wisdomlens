@@ -2,12 +2,13 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup|clear|compact",
         "hooks": [
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-context.mjs\"",
             "timeout": 10,
-            "statusMessage": "Wisdom Lens: loading skill triggers and quality checks…"
+            "statusMessage": "Wisdom Lens: loading skill triggers and quality checks\u2026"
           }
         ]
       }
@@ -31,7 +32,7 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tripwire-check.mjs\" --hook",
             "timeout": 15,
-            "statusMessage": "Wisdom Lens tripwire: repetition check…"
+            "statusMessage": "Wisdom Lens tripwire: repetition check\u2026"
           }
         ]
       }
@@ -42,7 +43,7 @@
           {
             "type": "prompt",
             "prompt": "You decide whether Claude may end its turn. Hook input JSON: $ARGUMENTS\n\nApply these rules in order and stop at the first that matches.\n1. If \"stop_hook_active\" is true, respond {\"ok\": true}. Claude is already revising because a stop hook blocked once; blocking again only loops.\n2. Judge only \"last_assistant_message\". If it is empty, asks the user a question, or reports a blocker, respond {\"ok\": true}.\n3. Respond {\"ok\": false, \"reason\": \"...\"} only for one of these concrete defects, quoting the offending sentence and naming the fix in one line:\n   a. It says work is done, fixed, passing, tested, or verified, shows no evidence for that claim (a command, test result, output, file path, or source), and does not say the claim is unverified.\n   b. It states a citation, statistic, or quotation as certain with no source and no uncertainty marker.\n   c. It is hostile, evasive, or deliberately ambiguous toward the user.\n4. Otherwise respond {\"ok\": true}. Style, length, depth, tone preferences, missing known/inferred/guessed labels, attribution, and whether the response is \"foam\" are guidance loaded at session start, not reasons to block. When unsure, allow.\n\nRespond with the JSON object only.",
-            "statusMessage": "Builder's Protocol check…"
+            "statusMessage": "Builder's Protocol check\u2026"
           }
         ]
       }
