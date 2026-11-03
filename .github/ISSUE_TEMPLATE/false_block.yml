@@ -55,6 +55,6 @@ body:
     attributes:
       label: Plugin version
       description: The wisdom-lens version Claude Code shows, or the tag or commit you installed from.
-      placeholder: "1.4.0"
+      placeholder: "1.5.0"
     validations:
       required: true

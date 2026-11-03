@@ -5,7 +5,7 @@
 
 **Your agent writes code. Wisdom Lens makes it think before it ships.**
 
-Wisdom Lens is a Claude Code plugin with three hooks and three on-demand skills (the skills also install in Codex, Kimi and OpenClaw). In Claude Code, a Stop hook sends Claude back when it claims "done", "fixed" or "passing" without showing evidence; a tripwire blocks the third identical tool call in a row; and the skills give the agent working rules for verifying, specifying, deciding and diagnosing AI failures.
+Wisdom Lens is a Claude Code plugin with four hooks and three on-demand skills (the skills also install in Codex, Kimi and OpenClaw). In Claude Code, a Stop hook sends Claude back when it claims "done", "fixed" or "passing" without showing evidence; a tripwire blocks the third identical tool call in a row; and the skills give the agent working rules for verifying, specifying, deciding and diagnosing AI failures.
 
 No API keys, no dependencies, no third-party network calls: the Stop check uses your existing Claude Code model once per turn. An optional adapter for JEV (TypeSafe's typed-judgment API; needs `TYPESAFE_API_KEY`) is described below.
 
@@ -23,7 +23,7 @@ Most agent failures aren't capability failures. They're judgment failures. Wisdo
 | Irreversible bets made blind | **The Probe Protocol** (Decision Engine): before irreversible commitments, run one low-cost, reversible test |
 | A single option sold as "the decision" | **Force three options** (Decision Engine): force three genuinely different options onto one page — including the option you dislike |
 
-In Claude Code, a session-start hook loads the checklist, a Stop hook sends Claude back to fix an unproven "done" or an unsourced statistic before the turn ends (you see the claim, then the correction), and a tripwire blocks the third identical tool call in a row.
+In Claude Code, a session-start hook loads the checklist, a prompt hook names the skill a prompt needs ("should we migrate?" → decision-engine), a Stop hook sends Claude back to fix an unproven "done" or an unsourced statistic before the turn ends (you see the claim, then the correction), and a tripwire blocks the third identical tool call in a row.
 
 ## Try it in 30 seconds (Claude Code)
 
@@ -34,7 +34,7 @@ Inside Claude Code, run:
 /plugin install wisdom-lens@wisdom-lens
 ```
 
-Requirements: the session and tripwire hooks run `node` (v20+) from your PATH. The Stop check sends your last reply to Claude Code's own model once per turn. Check the install with `claude plugin details wisdom-lens@wisdom-lens` (expected: Skills (3), Agents (1), Hooks (3)); if Claude Code asks, run `/reload-plugins`.
+Requirements: the session, prompt-routing and tripwire hooks run `node` (v20+) from your PATH. The Stop check sends your last reply to Claude Code's own model once per turn. Check the install with `claude plugin details wisdom-lens@wisdom-lens` (expected: Skills (3), Agents (1), Hooks (4)); if Claude Code asks, run `/reload-plugins`.
 
 Then try two prompts:
 
@@ -90,7 +90,7 @@ What each host gets:
 
 | Host | Install | Skills | Hooks | Agent |
 | --- | --- | --- | --- | --- |
-| Claude Code | `/plugin marketplace add CodeWithJuber/wisdomlens`, then `/plugin install wisdom-lens@wisdom-lens` | 3 | 3 | wisdom-advisor |
+| Claude Code | `/plugin marketplace add CodeWithJuber/wisdomlens`, then `/plugin install wisdom-lens@wisdom-lens` | 3 | 4 | wisdom-advisor |
 | Any skills-compatible agent | `npx skills add CodeWithJuber/wisdomlens` | 3 | none | none |
 | Codex | install the repository as a plugin (`.codex-plugin/plugin.json`) | 3 | not tested | – |
 | Kimi Code CLI | `/plugins install https://github.com/CodeWithJuber/wisdomlens`, then `/reload` | 3 | none | – |
@@ -120,15 +120,16 @@ Multiple skills can fire on the same prompt. See [skill-routing](skills/decision
 
 ## Hooks
 
-Three hooks keep the skills honest:
+Four hooks keep the skills honest:
 
 1. **Session context (SessionStart)** — `scripts/session-context.mjs` loads the skill triggers, the Builder's Protocol checklist (verify, specify, foam-check, mark uncertainty, attribute), and the tone check (straight speech, calibrated register, pressure awareness) at session start and again after `/clear` or compaction.
-2. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call and blocks a call (exit 2, `HALT-LOOP`) when it is the third or later identical call in a row (same tool, same normalized arguments); any different call ends the run. It stores only a one-way hash per call in Claude Code's plugin data directory (removed on uninstall; a subagent gets its own log, and logs untouched for 7 days are deleted), never in your project, and fails open on any error.
-3. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard. It is a `type: prompt` hook, so Claude Code sends the hook input, including your last reply, to its model once per turn.
+2. **Prompt routing (UserPromptSubmit)** — `scripts/prompt-router.mjs` adds one line naming the skill(s) a prompt calls for: a decision or tradeoff → decision-engine, shipping or declaring work done → builder-protocol, a loop, hallucination or sycophancy → new-lens. The session-start triggers sit far back in the context after a few prompts; this puts the right one next to the prompt that needs it. The patterns are narrow, so everyday coding prompts ("fix the for loop", "merge these two functions") get nothing. It reads only the prompt, writes nothing, and prints nothing on a malformed payload.
+3. **Tripwire (PreToolUse)** — `scripts/tripwire-check.mjs --hook` runs before every tool call and blocks a call (exit 2, `HALT-LOOP`) when it is the third or later identical call in a row (same tool, same normalized arguments); any different call ends the run. It stores only a one-way hash per call in Claude Code's plugin data directory (removed on uninstall; a subagent gets its own log, and logs untouched for 7 days are deleted), never in your project, and fails open on any error.
+4. **Builder's Protocol gate (Stop)** — a prompt hook that blocks a response only for a concrete defect: a "done" or "verified" with no evidence shown, a citation or statistic stated as certain with no source, or a hostile or evasive reply. It blocks at most once per turn: when `stop_hook_active` is true it lets the stop through, so a judgement call can't hold Claude in a revise loop. `tests/hooks-config.test.mjs` fails if a Stop prompt hook drops that guard. It is a `type: prompt` hook, so Claude Code sends the hook input, including your last reply, to its model once per turn.
 
 ### Turning hooks off
 
-- **Tripwire and session checklist:** set `WISDOM_LENS_TRIPWIRE=off` or `WISDOM_LENS_CONTEXT=off` in the environment Claude Code starts from, for example `export WISDOM_LENS_TRIPWIRE=off && claude`. The values `0`, `false` and `no` work too.
+- **Tripwire, session checklist and prompt routing:** set `WISDOM_LENS_TRIPWIRE=off`, `WISDOM_LENS_CONTEXT=off` or `WISDOM_LENS_ROUTER=off` in the environment Claude Code starts from, for example `export WISDOM_LENS_TRIPWIRE=off && claude`. The values `0`, `false` and `no` work too.
 - **Stop check:** it has no separate switch. `claude plugin disable wisdom-lens@wisdom-lens` turns everything off, and `/hooks` lists what is active.
 - **Upgrading from 1.3.x:** older versions wrote `.wisdom-lens/` into your project with copies of tool inputs. Delete it, and check it was never committed (`git log --all -- .wisdom-lens`).
 
