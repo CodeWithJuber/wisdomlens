@@ -4,6 +4,14 @@ Changes to the plugin as a whole: hooks, agent, manifests, CI and docs. Each ski
 
 ## [Unreleased]
 
+## [1.5.0] — 2026-11-03
+
+### Added
+- **Prompt routing (UserPromptSubmit hook).** `scripts/prompt-router.mjs` adds one line next to a prompt that calls for a skill: a decision or tradeoff → decision-engine, shipping or declaring work done → builder-protocol, a loop, hallucination or sycophancy → new-lens. Before, the triggers were loaded only at session start and sat far back in the context a few prompts later. The patterns are narrow (everyday coding prompts get nothing), the hook never blocks, prints nothing on a malformed payload, and `WISDOM_LENS_ROUTER=off` turns it off. `tests/prompt-router.test.mjs` covers routing, false positives, the hook wiring, malformed input and the off switch.
+
+### Changed
+- Session context no longer re-injects on `resume` or `fork` (SessionStart matcher `startup|clear|compact`): a resumed or forked session already carries it, so the second copy only cost tokens. It still loads at startup, after `/clear` and after compaction.
+
 ### Fixed
 - Tripwire logs no longer pile up: logs untouched for 7 days are deleted when a new session's log starts.
 - A subagent's tool calls are counted in their own tripwire log when the hook payload carries an `agent_id`, so they neither break nor extend the parent session's run of identical calls.
