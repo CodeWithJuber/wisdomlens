@@ -4,6 +4,14 @@ Changes to the plugin as a whole: hooks, agent, manifests, CI and docs. Each ski
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-11-22
+
+### Changed
+- **The prompt routing line is now an instruction, not a hint.** It reads `Wisdom Lens: before you answer, load with the Skill tool: decision-engine (decision or tradeoff)`; before it read `Wisdom Lens skill hint: …`. With many skills installed, Claude Code drops skill descriptions to fit its listing budget and lists a skill by name only. This line is then all that says when to load the skill, and a hint was easy to pass over. Still one line. Not measured: `claude plugin eval` could not sign in on the machine this was written on, so there is no before/after trigger rate yet.
+
+### Fixed
+- **The router no longer answers messages the harness submits by itself.** A subagent's hand-back (`<agent-message …>`) and a background-task notice go through UserPromptSubmit like a typed prompt. A report that mentioned "deploy" or "should we" routed to up to three skills. Those messages now route nowhere; a typed prompt that starts with other markup still routes.
+
 ## [1.5.0] — 2026-11-03
 
 ### Added

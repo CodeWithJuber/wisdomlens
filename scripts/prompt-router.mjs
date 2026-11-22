@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * prompt-router.mjs — UserPromptSubmit hook: names the Wisdom Lens skill(s)
- * whose trigger a prompt matches, so the right skill loads for this turn.
+ * prompt-router.mjs — UserPromptSubmit hook: tells the model to load the
+ * Wisdom Lens skill(s) whose trigger a prompt matches.
  *
  * SessionStart loads every trigger once (scripts/session-context.mjs). By the
  * tenth prompt that list sits far back in the context. This hook adds one
@@ -44,9 +44,17 @@ export const ROUTES = [
   ],
 ];
 
+/**
+ * What the harness submits by itself: a subagent's hand-back or a background-task notice.
+ * It goes through UserPromptSubmit like a typed prompt, but it is a report, not the user's
+ * request, so a report that mentions "deploy" must not load a skill.
+ */
+const HARNESS_MESSAGE = /^\s*(<(agent-message|task-notification)\b|\[SYSTEM NOTIFICATION\b)/;
+
 /** The skills whose route a prompt matches, in ROUTES order. */
 export function route(prompt) {
   if (typeof prompt !== "string" || !prompt.trim() || prompt.trimStart().startsWith("/")) return [];
+  if (HARNESS_MESSAGE.test(prompt)) return [];
   return ROUTES.filter(([, pattern]) => pattern.test(prompt)).map(([skill, , why]) => ({ skill, why }));
 }
 
@@ -55,7 +63,9 @@ export function routeContext(prompt) {
   const hits = route(prompt);
   if (hits.length === 0) return "";
   // One line: this lands next to the prompt on every match, so every word costs tokens.
-  return `Wisdom Lens skill hint: ${hits.map(({ skill, why }) => `${skill} (${why})`).join("; ")}`;
+  // It is an instruction, not a hint. With many skills installed, Claude Code lists a skill
+  // by name only, and then this line is all that says when to load it.
+  return `Wisdom Lens: before you answer, load with the Skill tool: ${hits.map(({ skill, why }) => `${skill} (${why})`).join("; ")}`;
 }
 
 const OFF_VALUES = /^(0|false|off|no)$/i;
